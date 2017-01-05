@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--The default values for Firebase Remote Config for automatic app update-->
+<defaultsMap>
+    <entry>
+        <key>latest_version_number</key>
+        <value>-1</value>
+    </entry>
+    <entry>
+        <key>latest_version_name</key>
+        <value>0.0</value>
+    </entry>
+    <entry>
+        <key>changelog</key>
+        <value>Error fetching Changelog..</value>
+    </entry>
+    <entry>
+        <key>download_link</key>
+        <value>http://forum.xda-developers.com/android/apps-games/app-universal-mass-storage-enabler-beta-t3240097</value>
+    </entry>
+</defaultsMap>

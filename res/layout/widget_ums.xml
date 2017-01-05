@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <ImageView
+        android:id="@+id/UMSwidgetButton"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@drawable/usb_off"/>
+
+    <!--<TextView
+        android:id="@+id/UMSwidgetStatus"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="000"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/UMSwidgetActionButton"
+        android:layout_height="match_parent"
+        android:text="Refresh"
+        android:layout_width="match_parent" />-->
+
+</LinearLayout>

@@ -1,0 +1,11 @@
+/.gradle/*
+/.idea/*
+/app/*
+bin/
+/build/
+/gradle/*
+/projectFilesBackup
+google-services.json
+local.properties
+settings.gradle
+USB_Mass_Storage_Enabler.iml

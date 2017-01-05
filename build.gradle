@@ -1,0 +1,93 @@
+buildscript {
+     ext {
+        setup = [compileSdk: 25,
+                 buildTools: "25",
+                 minSdk    : 14,
+                 targetSdk : 25]
+
+        versions = [supportLib: "24.1.1"]
+    }
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.novoda:bintray-release:0.3.4'
+        classpath 'com.google.gms:google-services:3.0.0'
+
+    }
+}
+apply plugin: 'com.android.application'
+
+dependencies {
+    compile fileTree(include: '*.jar', dir: 'libs')
+    //compile project(':library')
+    //compile 'com.google.android.gms:play-services-appindexing:10.0.1'
+    compile 'com.google.firebase:firebase-analytics:10.0.1'
+    compile 'com.google.firebase:firebase-ads:10.0.1'
+    compile 'com.google.firebase:firebase-config:10.0.1'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile 'com.nononsenseapps:filepicker:3.1.0'
+    compile('com.mikepenz:materialdrawer:5.8.0@aar') {
+        transitive = true
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}
+
+
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25'
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+
+        // Move the tests to tests/java, tests/res, etc...
+        instrumentTest.setRoot('tests')
+
+        // Move the build types to build-types/<type>
+        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
+        // This moves them out of them default location under src/<type>/... which would
+        // conflict with src/ being used by the main source set.
+        // Adding new build types or product flavors should be accompanied
+        // by a similar customization.
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+
+    buildTypes {
+
+        release {
+
+            minifyEnabled true
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-ums.txt'
+
+        }
+
+    }
+}
+
+apply plugin: 'com.google.gms.google-services'

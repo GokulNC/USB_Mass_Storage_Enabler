@@ -1,0 +1,25 @@
+<html><body>
+<h3><b>What is this App:</b></h3><br>
+
+This ROOT app is for mounting your memory card as a USB Mass Storage (UMS) device on your computer, or TV or Audio/DVD Player or whatever.<br>
+
+This app will NOT mount your Internal Storage (since it\'s located in /data partition inside the ./media/0/ directory and the /data partition is formatted as EXT4).
+<br>If you really want to mount your Internal Storage as UMS, it can done using the <a href='http://google.com/search?q=usb+sharer+apk'>USB Sharer app</a> (but it'll be mounted as read-only).<br><br>
+
+<hr><h3><b>How To Use the App:</b></h3><br>
+
+1. To enable Mass Storage, press 'Enable Mass Storage'.
+    (Try 2-3 times if it's not working, also try changing app settings)<br><br>
+2. Before disconnecting USB, eject from Computer first, then press the 'Disconnect Mass Storage' button.<br><br>
+
+<hr><h3><b>Possible Reasons Why This App is Not Working:</b></h3><br>
+
+1. Your device's kernel doesn't have Mass Storage Gadget with USB emulation support.<br><u>Solution:</u> Ask any developer of your device to compile a kernel with USB Gadget.<br><br>
+2. Your device doesn't have memory card support, or there's no memory card inserted.<br><br>
+3. Your memory card might be encrypted or used as Internal Storage (for <b>Android 6.0</b> and above, by which it is formatted as an EXT4 partition and encrypted)<br><u>Solution:</u> Make sure it is formatted as a <b>FAT32</b> partition.<br><br>
+4. There might be something (like Anti-Virus) which doesn't allow to disable SE Linux Enforcement.<br><br>
+5. Your device might not be rooted properly.<br><br>
+
+For further help and more clarifications or if there's any suggestions/bugs found, click here: <h2><b><a href='http://forum.xda-developers.com/android/apps-games/app-universal-mass-storage-enabler-beta-t3240097'>Help & Support</a></b></h2>
+<br><br>Developed by: <b><a href='http://fb.com/gokulnc'>Gokul NC</a></b><br>
+</body></html>

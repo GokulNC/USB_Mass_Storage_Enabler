@@ -1,0 +1,35 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.gokulnc.ums_universal.MainActivity">
+
+    <item android:id="@+id/action_help"
+        android:icon="@drawable/help_action_bar"
+        android:title="@string/action_help"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_settings"
+        android:icon="@drawable/settings_action_bar"
+        android:title="@string/action_settings"
+        app:showAsAction="always"/>
+
+
+    <!--<item android:id="@+id/adb"
+         android:title="Enable ADB"
+         android:actionViewClass="android.widget.CheckBox"
+         android:checkable="true" />
+    <item  android:id="@+id/advanced"
+        android:title="Advanced Settings"/>
+    <item  android:id="@+id/storageSettings"
+        android:title="Storage Settings"/>
+     <item  android:id="@+id/defaultUSBsettings"
+        android:title="Default USB Settings"/>
+    <item  android:id="@+id/enableSElinux"
+        android:title="Enable SELinux &amp; Exit"/>
+    <item  android:id="@+id/updates"
+        android:title="Check Updates"/>
+    <item  android:id="@+id/help"
+        android:title="Help"/>
+    <item  android:id="@+id/exit"
+        android:title="Exit"/>-->
+</menu>

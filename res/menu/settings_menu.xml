@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.gokulnc.ums_universal.AdvancedOptions">
+
+    <item android:id="@+id/action_reload"
+        android:icon="@drawable/ic_cached_black_48dp"
+        android:title="@string/action_list_all" />
+
+    <item android:id="@+id/action_add_block"
+        android:icon="@drawable/ic_add_box_black_48dp"
+        android:title="@string/action_add_block_manually" />
+
+</menu>

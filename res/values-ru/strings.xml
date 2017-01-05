@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_auto_start">Разрешить автозапуск</string>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_disable_notifs">Отключить уведомления</string>
+    <string name="action_disable_selinux">Уст. разрешение</string>
+    <string name="action_disable_ums">Отключить USB Mass Storage</string>
+    <string name="action_disable_ums_short">Отключить UMS</string>
+    <string name="action_download">Скачать</string>
+    <string name="action_enable_adb">Разрешить ADB</string>
+    <string name="action_enable_auto_update_check">Автопроверка обновлений</string>
+    <string name="action_enable_mediascan">Разрешить сканир. Медиа</string>
+    <string name="action_enable_mtp">Включить MTP Mode</string>
+    <string name="action_enable_ums">Включить USB Mass Storage</string>
+    <string name="action_enable_ums_short">Включить UMS</string>
+    <string name="action_exit">Выход</string>
+    <string name="action_help">Помощь</string>
+    <string name="action_install_busybox">Уст. BusyBox</string>
+    <string name="action_later">Позже</string>
+    <string name="action_list_all">список всех LUNs и Blocks</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save_close">Сохранить &amp; Закрыть</string>
+    <string name="action_select_mediascan_path">Указать путь к SD карте</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_show_changelog">Что нового</string>
+    <string name="action_yes">да</string>
+    <string name="alert_check_update">Проверка обновлений!</string>
+    <string name="alert_check_update_msg">Хотите проверить наличие обновлений вручную?</string>
+    <string name="alert_current_ver">Текущая версия:\u0009</string>
+    <string name="alert_download_new">Хотите загрузить последнее обновление?</string>
+    <string name="alert_lastest_ver">Последняя версия:\u0009</string>
+    <string name="alert_mmc_not_found">Карта памяти не найдена</string>
+    <string name="alert_mmc_not_found_msg">"Карта памяти не найдена на устройстве. 
+\n\n(Блочный файл устройства '/dev/block/mmcblk1' не найден.
+\n\nЕсли устройство поддерживает карты памяти и вы по прежнему видите эту ошибку, обратитесь к разработчику.)"</string>
+    <string name="alert_multi_luns_msg">Если вы видите несколько карт памяти на своем компьютере, извлеките все кроме используемой.</string>
+    <string name="alert_new_update">Доступно обновление!</string>
+    <string name="alert_no_blocks">"Нет поддержки карт памяти или не найдены Vold Blocks!
+
+\n\nПриложение не будет работать на этом устройстве."</string>
+    <string name="alert_no_busybox">BusyBox не установлен!</string>
+    <string name="alert_no_busybox_msg">"Приложению требуется установленный BusyBox для некоторых бинарных файлов. 
+
+\n\nБез него приложение может работать неправильно.
+
+\n\nДля лучшей поддержки, рекомендуется установить BusyBox, Clear Data этого приложения и использовать его (или переустановить приложение).
+
+\n\n(Это предупреждение больше отображаться не будет!)"</string>
+    <string name="alert_no_gadget">Приложен. не будет работать!</string>
+    <string name="alert_no_gadget_msg">"Устройство не поддерживает Mass Storage! 
+
+\n\nПриложение будет работать только если устройство поддерживает Mass Storage  &amp; драйверы FUSE (файловая система в пользов.-м пространстве) встроены в ядро системы. И не будет, пока не прошито совместимое ядро.."</string>
+    <string name="alert_no_root_msg">"Не удалось получить ROOT-доступ. 
+
+\n\nПриложение работает только на ROOT-устройствах.
+
+\n\nЕсли устройство рутовано, убедитесь, что приложению разрешен ROOT-доступ."</string>
+    <string name="alert_no_support">Устройство не поддерживается</string>
+    <string name="alert_perm_denied">Разрешение не получено!</string>
+    <string name="alert_selinux">"SE Linux принудительно включен! 
+
+\n\nSE Linux принудительно - требует установки 'Разрешения' для работы приложения."</string>
+    <string name="alert_to_stop_autoupdate">(Вы можете отключить автоматическую проверку обновлений из Settings.)</string>
+    <string name="alert_unmount">"Во избежание проблем возможно вам  придется сначала размонтировать карту памяти в Настройки -> Хранилище. 
+
+\n\nЗатем можете включить UMS.
+
+\n\nПосле отсоединения USB вы можете перемонтировать карту памяти аналогично настройкам Хранилища."</string>
+    <string name="alert_unsupportedLUNs">Следующие LUNs не поддерживает USB Emulation.
+\n\nОднако, Вы можете попробовать app, чтобы проверить результаты самостоятельно..</string>
+    <string name="alert_update_failed">"Не удалось проверить обновления.
+ 
+\n\nУбедитесь, что подключены к интернет."</string>
+    <string name="alert_upto_date">"Обновления не найдены.
+
+\n\nВы используете последнюю версию!"</string>
+    <string name="alert_warning">Предупреждение</string>
+    <string name="app_name">UMS Активатор (Унив.)</string>
+    <string name="app_name_short">UMS Активатор</string>
+    <string name="asset_help_html">help-ru.html</string>
+    <string name="drawer_item_app_settings">Расширенные настройки</string>
+    <string name="drawer_item_check_updates">Проверить обновления</string>
+    <string name="drawer_item_default_usb_settings">Настройки USB-подключения</string>
+    <string name="drawer_item_enable_adb">Разрешить ADB</string>
+    <string name="drawer_item_enable_selinux">Включить SELinux и Выйти</string>
+    <string name="drawer_item_enable_selinux_description">Установить SELinux принудительно &amp; Выйти</string>
+    <string name="drawer_item_storage_settings">Настройки хранилища</string>
+    <string name="drawer_item_support">Реклама (поддержи меня!)</string>
+    <string name="error_contact">Пожалуйста свяжитесь с разработчиком для получения помощи.</string>
+    <string name="error_details">Детали:</string>
+    <string name="error_execution">Невозможно выполнить следующую команду:</string>
+    <string name="error_general">Сбой приложения</string>
+    <string name="error_msg">Сообщение об ошибке:</string>
+    <string name="error_no_root">Возможно устройство не рутовано.</string>
+    <string name="error_root_denied">Пользователю отказано в Root-доступе..</string>
+    <string name="error_root_not_granted">Не удалось получить Root-доступ.</string>
+    <string name="error_root_timeout">Ожидание Root-доступа..</string>
+    <string name="error_selinux">Не удалось проверить статус SE Linux!</string>
+    <string name="error_su_not_found">Похоже su бинарный файл отсутствует или не обнаружен.</string>
+    <string name="error_ums">Сбой включения UMS!</string>
+    <string name="error_ums_disable">Сбой отключения UMS!</string>
+    <string name="error_unable_shell">Не удалось получить RootShell (shell в виде su).</string>
+    <string name="error_unknown">"Внутренняя ошибка приложения. 
+\nОбратитесь к разработчику."</string>
+    <string name="main_layout_usb_config">USB конфиг.:</string>
+    <string name="main_layout_usb_status">USB статус:</string>
+    <string name="nnf_need_valid_filename">Пожалуйста введите или выберите подходящее имя файла</string>
+    <string name="notif_ums_enabled">UMS включен</string>
+    <string name="notif_ums_enabled_msg">Нажмите для отключения</string>
+    <string name="settings_layout_luns_in_use">Исп. LUNs:</string>
+    <string name="settings_layout_mediascan_path">Путь к SD карте</string>
+    <string name="settings_layout_partition_in_use">Исп. Partition Block:</string>
+    <string name="state_connected">ПОДКЛЮЧЕНО</string>
+    <string name="state_disconnected">ОТКЛЮЧЕНО</string>
+    <string name="title_activity_advanced_options">Расширенные настройки</string>
+    <string name="title_activity_help">Помощь &amp; Испр. проблем</string>
+    <string name="toast_checking_update">Проверка обновлений..</string>
+    <string name="toast_internet_problem">Проверьте подключение и попробуйте снова</string>
+    <string name="toast_loading">Загрузка..</string>
+    <string name="toast_mtp_enabled">MTP включен!</string>
+    <string name="toast_no_root">Нет Root доступа</string>
+    <string name="toast_selinux_enabled">SELinux задан принудительно!</string>
+    <string name="toast_thanks">Спасибо</string>
+    <string name="toast_ums_disabled">Mass Storage отключен!</string>
+    <string name="toast_ums_enabled">Mass Storage включен!</string>
+    <string name="toast_usb_not_connected">Убедитесь, что подключение USB выбрано по умолчанию для устройства!</string>
+    <string name="toast_zero_luns">Выберите не менее одного LUN</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-1067658817574197/9781768067</string>
+    <string name="banner_ad_unit_id2">ca-app-pub-1067658817574197/7868468860</string>
+    <string name="banner_ad_unit_id3">ca-app-pub-1067658817574197/7030864065</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-1067658817574197/1883398061</string>
+    <string name="ad_app_id">ca-app-pub-1067658817574197~6828301660</string>
+    <string name="toast_open_app_once">Open the app atleast once</string>
+    <string name="notif_ums_disabled">UMS is Disabled</string>
+    <string name="notif_ums_disabled_msg">Current USB mode is MTP</string>
+    <string name="action_add_block_manually">Add Block file manually</string>
+    <string name="alert_add_block_manually">Adding Block Manually</string>
+    <string name="alert_add_block_manually_msg">Are you sure you want to add the following block file manually?
+\n(Do this only if you understand what you are doing..)
+\n\nSelected Block File Path: </string>
+    <string name="action_add">Add</string>
+    <string name="action_update">Update Now</string>
+    <string name="alert_update_download_permission">You need to grant permission to download app to storage. Retry and grant it..</string>
+    <string name="alert_update_download_permission_failed">You have denied the permission to download the updated APK</string>
+    <string name="toast_downloading">Downloading</string>
+    <string name="alert_block_notrecommended">You are using a device block which is not recommended (instead of its corresponding recommended partition)</string>
+</resources>

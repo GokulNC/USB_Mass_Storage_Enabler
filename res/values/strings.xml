@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UMS Enabler (Universal)</string>
+    <string name="app_name_short">UMS Enabler</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_help">Help</string>
+    <string name="action_exit">Exit</string>
+    <string name="action_disable_selinux">Set to Permissive</string>
+    <string name="action_enable_ums">Enable USB Mass Storage</string>
+    <string name="action_disable_ums">Disable USB Mass Storage</string>
+    <string name="action_enable_ums_short">Enable UMS</string>
+    <string name="action_disable_ums_short">Disable UMS</string>
+    <string name="action_download">Download Now</string>
+    <string name="action_enable_auto_update_check">Automatically Check New Updates</string>
+    <string name="action_enable_mtp">Enable MTP Mode</string>
+    <string name="action_enable_adb">Enable ADB</string>
+    <string name="action_disable_notifs">Disable Notification</string>
+    <string name="action_auto_start">Auto-enable UMS</string>
+    <string name="action_save_close">Save &amp; Close</string>
+    <string name="action_enable_mediascan">Enable Media Scan</string>
+    <string name="action_select_mediascan_path">Select Memory Card Path</string>
+    <string name="action_list_all">List all LUNs &amp; Blocks</string>
+    <string name="action_show_changelog">Changelog</string>
+    <string name="action_yes">Yes</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_ok">OK</string>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <string name="title_activity_help">Help &amp; Troubleshooting</string>
+    <string name="title_activity_advanced_options">App Settings</string>
+
+    <!--____________________ DRAWER ITEMS :______________________________________-->
+
+    <string name="drawer_item_default_usb_settings">Default USB Settings</string>
+    <string name="drawer_item_storage_settings">Storage Settings</string>
+    <string name="drawer_item_app_settings">App Settings</string>
+    <string name="drawer_item_enable_selinux">Enable SELinux and Exit</string>
+    <string name="drawer_item_enable_selinux_description">Set SELinux to Enforcing &amp; Quit</string>
+    <string name="drawer_item_check_updates">Check Updates</string>
+    <string name="drawer_item_enable_adb">Enable ADB</string>
+    <string name="drawer_item_support">View Ads (to support me)</string>
+
+    <!--____________________ TOAST MESSAGES :______________________________________-->
+
+    <string name="toast_usb_not_connected">Please connect USB to choose device\'s default mode!</string>
+    <string name="toast_selinux_enabled">SELinux set to Enforcing!!</string>
+    <string name="toast_internet_problem">Please Try Again with Internet On</string>
+    <string name="toast_ums_enabled">Mass Storage Enabled!!</string>
+    <string name="toast_ums_disabled">UMS Disabled!!</string>
+    <string name="toast_mtp_enabled">MTP Enabled!!</string>
+    <string name="toast_no_root">No Root Access</string>
+    <string name="toast_checking_update">Checking for updates..</string>
+
+    <string name="toast_zero_luns">Select atleast one LUN to use</string>
+    <string name="toast_thanks">Thanks</string>
+    <string name="toast_loading">Loading..</string>
+
+    <!--_____________________ ALERT DIALOGS :___________________________________________-->
+
+    <string name="alert_mmc_not_found">Memory Card Not Found</string>
+    <string name="alert_mmc_not_found_msg">Memory Card Support Not Found In Device.
+\n\n(The block device file \'/dev/block/mmcblk1\' is not found.
+\n\nIf there\'s memory card support in your device and still this error occurs, contact the developer.)</string>
+    <string name="alert_no_support">Device Not Supported</string>
+    <string name="alert_no_blocks">No Memory Card support or Vold Blocks found.!
+\nThis app won\'t work in this device.</string>
+
+    <string name="alert_perm_denied">Permission Denied</string>
+
+    <string name="alert_selinux">SE Linux Enforcement is Enabled!!
+\n\nSE Linux Enforcement needs to be set \'Permissive\' for this app to work.</string>
+
+    <string name="alert_no_gadget">App Won\'t Work!</string>
+    <string name="alert_no_gadget_msg">No Mass Storage Gadget Found!
+\n\nThis app will work only if there is Mass Storage Gadget &amp; FUSE drivers built-in in your device\'s kernel, and won\'t work until a compatible kernel is flashed..</string>
+
+    <string name="alert_no_root_msg">Unable to Obtain Root Access.
+\nThis app works only on Rooted Devices.
+\n\nIf the device is rooted, make sure Root Access is granted to this app.</string>
+
+    <string name="alert_check_update">Check for New Updates</string>
+    <string name="alert_check_update_msg">Do you want to check for new updates manually?</string>
+    <string name="alert_upto_date">No new updates found.\n\n
+You are running the latest version </string>
+    <string name="alert_new_update">New Update Found!!</string>
+    <string name="alert_lastest_ver">Latest Version:\t</string>
+    <string name="alert_current_ver">Current Version:\t</string>
+
+    <string name="alert_download_new">Do you want to download the latest update?</string>
+    <string name="alert_update_failed">Unable to check for latest update.\n
+Make sure you are connected to the Internet.</string>
+    <string name="alert_update_download_permission">You need to grant permission to download app to storage. Retry and grant it..</string>
+
+    <string name="alert_no_busybox">BusyBox Not Installed</string>
+    <string name="alert_no_busybox_msg">This app needs BusyBox Installed for certain binaries.
+\n\nThis app may or may not work properly without it.
+
+\n\nFor better support, it is recommended to install BusyBox, Clear Data of this app and use it (or reinstall app).
+\n(This alert will not be shown again..)
+</string>
+    <string name="action_install_busybox">Install BusyBox</string>
+    <string name="action_later">Later</string>
+
+    <string name="alert_unmount">To avoid issues, you might have to unmount the memory card first from Settings -> Storage.
+\nAfter that, you can enable UMS.
+\n\nAfter disconnecting USB, you can remount the memory card similarly from Storage Settings.</string>
+    <string name="alert_multi_luns_msg">If you see the memory card mounted more than once in your Computer, eject all the additional memory card drives except any one to use.</string>
+
+    <string name="alert_warning">Warning!</string>
+    <string name="alert_unsupportedLUNs">The following LUNs  MIGHT not support USB Emulation.
+\n\nHowever, you may try the app to check the result yourself..</string>
+
+    <string name="error_msg">Error Message:</string>
+    <string name="error_details">Details:</string>
+    <string name="error_unknown">Internal Application Error.
+\nContact the developer.</string>
+    <string name="error_su_not_found">It seems su binary is missing, or unable to search for it.</string>
+    <string name="error_no_root">Device Not Probably Rooted.</string>
+    <string name="error_root_not_granted">Unable to Obtain Root Access.</string>
+    <string name="error_root_timeout">Timeout waiting for Root Access..</string>
+    <string name="error_root_denied">User Denied Root Access..</string>
+    <string name="error_unable_shell">Unable to obtain a RootShell (shell as su).</string>
+    <string name="error_selinux">Unable to check SE Linux Status!!</string>
+    <string name="error_execution">Unable to execute the following command:</string>
+    <string name="error_contact">Please contact the developer for further help.</string>
+    <string name="error_general">App Failed</string>
+    <string name="error_ums">Error Enabling UMS!</string>
+    <string name="error_ums_disable">Error disabling UMS!</string>
+
+    <!--_____________________ NOTIFICATIONS :___________________________________________-->
+
+    <string name="notif_ums_enabled">UMS is Enabled</string>
+    <string name="notif_ums_disabled">UMS is Disabled</string>
+    <string name="notif_ums_enabled_msg">Current USB mode is UMS</string>
+    <string name="notif_ums_disabled_msg">Current USB mode is MTP</string>
+
+    <!--_____________________ DYNAMIC LAYOUT :___________________________________________-->
+
+    <string name="settings_layout_luns_in_use">LUNs in use:</string>
+    <string name="settings_layout_partition_in_use">Partition Block in use:</string>
+    <string name="settings_layout_mediascan_path">Selected Memory Card Path</string>
+
+    <string name="main_layout_usb_config">USB Config:</string>
+    <string name="main_layout_usb_status">USB Status:</string>
+    <string name="state_connected">CONNECTED</string>
+    <string name="state_disconnected">DISCONNECTED</string>
+
+    <!--_____________________________________________________________________________-->
+
+    <string name="asset_help_html">help.html</string>
+    <string name="nnf_need_valid_filename">Select Proper Filename</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-1067658817574197/9781768067</string>
+    <string name="banner_ad_unit_id2">ca-app-pub-1067658817574197/7868468860</string>
+    <string name="banner_ad_unit_id3">ca-app-pub-1067658817574197/7030864065</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-1067658817574197/1883398061</string>
+    <string name="ad_app_id">ca-app-pub-1067658817574197~6828301660</string>
+    <string name="alert_to_stop_autoupdate">(You can disable automatic update check from Settings.)</string>
+    <string name="toast_open_app_once">Open the app atleast once</string>
+    <string name="action_add_block_manually">Add Block file manually</string>
+    <string name="alert_add_block_manually">Adding Block Manually</string>
+    <string name="alert_add_block_manually_msg">Are you sure you want to add the following block file manually?
+\n(Do this only if you understand what you are doing..)
+\n\nSelected Block File Path: </string>
+    <string name="action_add">Add</string>
+    <string name="action_update">Update Now</string>
+    <string name="alert_update_download_permission_failed">You have denied the permission to download the updated APK</string>
+    <string name="toast_downloading">Downloading</string>
+    <string name="alert_block_notrecommended">You are using a device block which is not recommended (instead of its corresponding recommended partition)</string>
+
+</resources>

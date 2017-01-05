@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/empty_container">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_blah"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" 
+		app:title="@string/app_name_short"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progessbar"
+        style="?android:attr/progressBarStyleLarge"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        android:foregroundGravity="center"
+        android:layout_below="@+id/toolbar_blah"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="177dp" />
+
+    <TextView
+        android:text="@string/toast_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:foregroundGravity="center_horizontal"
+        android:textColor="@color/black"
+        android:layout_below="@+id/progessbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+
+</RelativeLayout>
