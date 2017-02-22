@@ -136,7 +136,7 @@ public class AdvancedOptions extends AppCompatActivity {
 			//radioGroupToBlockMap.put(rb[i].getId(), i);
 			rb[i].setId(i);
 			radioGroup.addView(rb[i], i);
-			if( MainActivity.blockDeviceFiles.get(i).equals( MainActivity.blockDeviceFiles.get(MainActivity.blockNumber) ) ) {
+			if( MainActivity.blockDeviceFiles.get(i).equals( MainActivity.blockDeviceFiles.get(MainActivity.data.getInt(MainActivity.defaultBlockNumber, -1)))) {
 				radioGroup.check(radioGroup.getChildAt(i).getId());
 				//Toast.makeText(getApplicationContext(), "id: "+radioGroup.getChildAt(i).getId(), Toast.LENGTH_SHORT).show();
 			}
@@ -179,7 +179,6 @@ public class AdvancedOptions extends AppCompatActivity {
 				//Save Selected Partition Block:
             	if(blockNum != -1) {
             		MainActivity.requiresUnmount = !MainActivity.recommendedBlocks[blockNum];
-            		MainActivity.blockNumber = blockNum;
             		MainActivity.data.edit().putInt(MainActivity.defaultBlockNumber, blockNum).apply();
             		MainActivity.blockDevice = MainActivity.blockDeviceFiles.get(blockNum);
             		Log.d(MainActivity.LOG_TAG, "Advanced: Selected "+MainActivity.blockDeviceFiles.get(blockNum)+" as Default Block.");
@@ -242,12 +241,14 @@ public class AdvancedOptions extends AppCompatActivity {
 
 	void initADs() {
 
+		if(MainActivity.enableADs) {
 		/*AdView mAdView = (AdView) findViewById(R.id.adViewInSettings);
 		mAdView.loadAd(new AdRequest.Builder().build());*/
 
-		AdView mAdView1 = (AdView) findViewById(R.id.adViewInSettingsBottom);
-		mAdView1.loadAd(new AdRequest.Builder().build());
-		Log.d(MainActivity.LOG_TAG, "Ads initialized in Settings Activity..");
+			AdView mAdView1 = (AdView) findViewById(R.id.adViewInSettingsBottom);
+			mAdView1.loadAd(new AdRequest.Builder().build());
+			Log.d(MainActivity.LOG_TAG, "Ads initialized in Settings Activity..");
+		}
 	}
 
 	@Override

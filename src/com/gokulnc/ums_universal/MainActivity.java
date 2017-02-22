@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
@@ -61,13 +62,14 @@ import com.stericson.RootShell.execution.Shell;
 import com.stericson.RootTools.RootTools;
 import com.mikepenz.materialdrawer.Drawer;
 
+import static com.gokulnc.ums_universal.Dialogs.*;
+
 
 public class MainActivity extends AppCompatActivity {
 
+	//Following strings correspond to SharedPref keys
 	public static SharedPreferences data;
 	public static final String MyPREFERENCES = "Settings" ;
-	public static Boolean extSDpresent = false;
-	Boolean isFirstRun = false;
 	public static final String extSDpresence = "extSDpresence";
 	public static final String firstRun = "isFirstRun";
 	public static final String currentVersionCode = "currentVersionCode";
@@ -98,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
 	public static boolean isAppOpen = false;
 	static Boolean SELinux = true;
 	static Boolean requiresUnmount = false;
-	static Boolean busyboxPresent = true;
 	static Boolean rootAccess = false;
 	static Boolean USBconnected = false;
 	static boolean enableADB = false;
@@ -120,33 +121,6 @@ public class MainActivity extends AppCompatActivity {
 	TextView USBstatus, USBmode;
 
 	BroadcastReceiver mUsbReceiver;
-	
-	public static final String LUNlist[] = { //all these are just symlinks
-			"/sys/class/android_usb/android0/f_mass_storage/lun",
-			"/sys/class/android_usb/android0/f_mass_storage/lun0",
-			"/sys/class/android_usb/android0/f_mass_storage/lun1",
-			"/sys/class/android_usb/android0/f_mass_storage/lun2",
-			"/sys/class/android_usb/android0/f_mass_storage/lun_ex",
-			"/sys/class/android_usb/android1/f_mass_storage/lun_ex", //<- for some stupid kernel I saw somewhere
-			"/sys/class/android_usb/android0/f_mass_storage/lun_cd",
-			"/sys/class/android_usb/android0/f_mass_storage/rom",
-			"/sys/class/android_usb/android0/f_mass_storage/cdrom",
-			"/sys/class/android_usb/android0/f_mass_storage/usbdisk",
-			"/sys/class/android_usb/android0/f_mass_storage/uicc0",
-			"/sys/class/android_usb/android0/f_mass_storage/uicc1",
-			"/sys/class/android_usb/android0/f_mass_storage/usbdisk",
-			"/sys/class/android_usb/android0/f_cdrom_storage/lun" //for very old devices
-			
-			//Below are direct LUN paths for some device kernels, which I've generally seen
-			//I don't use these now, since the searchLUNs() does this automatically
-			/* "/sys/devices/platform/mt_usb/gadget/lun#/file"
-			"/sys/devices/platform/mt_usb/musb-hdrc.0/gadget/lun%d/file" 
-			"/sys/devices/platform/s3c-usbgadget/gadget/lun#/file"
-			"/sys/devices/platform/usb_mass_storage/lun#/file"
-			"/sys/devices/platform/omap/musb-omap2430/musb-hdrc/gadget/lun#/file"
-			"/sys/devices/platform/fsl-tegra-udc/gadget/lun#/file"
-			"/sys/devices/platform/msm_hsusb/gadget/lun#/file" */
-			};
 
 	static ArrayList<String> availableLUNs = new ArrayList<>();
 	static ArrayList<String> blockDeviceFiles = new ArrayList<>();
@@ -180,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
 	public static final String memoryCardBlock = "/dev/block/mmcblk1";
 	static String blockDevice = "";
 	static String memoryCardPath = "";
-	public static int blockNumber = 0;
 	public static final String LOG_TAG = "UMSenabler";
 
 	public static final String XdaThreadURL = "http://forum.xda-developers.com/android/apps-games/app-universal-mass-storage-enabler-beta-t3240097";
@@ -195,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_empty);
 		//((RelativeLayout) findViewById(R.id.empty_container)).addView(new ProgressBar(this));
 
-
 		new Thread() {
 			@Override
 			public void run() {
@@ -204,15 +176,13 @@ public class MainActivity extends AppCompatActivity {
 					getRootShell();
 
 					data = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-					extSDpresent = data.getBoolean(extSDpresence, false);
-					isFirstRun = data.getBoolean(firstRun, true);
-					if(isFirstRun) Log.d(LOG_TAG, "Running app for first time");
+
 					blockRecommendation = data.getBoolean(blockRecommendations, true);
 					currentVersionNumber = data.getInt(currentVersionCode, 0);
 					try {
 						currentVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 						if(currentVersionNumber < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
-							isFirstRun = true;
+							data.edit().putBoolean(firstRun, true).apply();
 							Log.d(LOG_TAG, "Possible Update from "+currentVersionNumber+" to "+MainActivity.this.getPackageManager().getPackageInfo(MainActivity.this.getPackageName(), 0).versionCode);
 							currentVersionNumber = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
 						}
@@ -233,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 						}
 						if(!rootAccess) {
 							Log.d(LOG_TAG, "Unable to obtain su RootShell.");
-							noRootAccess(getString(R.string.error_unable_shell));
+							noRootAccess(getString(R.string.error_unable_shell), MainActivity.this);
 						} else {
 							Log.d(LOG_TAG, "Obtained RootShell..");
 							Log.d(LOG_TAG, "Checking SE Linux Status");
@@ -252,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
 						}
 
-					} else noRootAccess(getString(R.string.error_root_not_granted));
+					} else noRootAccess(getString(R.string.error_root_not_granted), MainActivity.this);
 					//Further path of execution is from continueExec() (which is called from checkSELinux() method)
 
 					/*MainActivity.this.runOnUiThread(new Runnable() {
@@ -303,23 +273,32 @@ public class MainActivity extends AppCompatActivity {
 
 	void initADs() {
 
-		//https://firebase.google.com/docs/admob/android/quick-start
-		MobileAds.initialize(getApplicationContext(), getString(R.string.ad_app_id));
-		AdView mAdView = (AdView) findViewById(R.id.adView);
-		AdRequest adRequest = new AdRequest.Builder().build();
-		mAdView.loadAd(adRequest);
-		Log.d(LOG_TAG, "Ads initialized..");
+		if(enableADs) {
+			//https://firebase.google.com/docs/admob/android/quick-start
+			MobileAds.initialize(getApplicationContext(), getString(R.string.ad_app_id));
+			AdView mAdView = (AdView) findViewById(R.id.adView);
+			AdRequest adRequest = new AdRequest.Builder().build();
+			mAdView.loadAd(adRequest);
+			Log.d(LOG_TAG, "Ads initialized..");
 
-		mInterstitialAd = new InterstitialAd(this);
-		mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
-		mInterstitialAd.setAdListener(new AdListener() {
-			@Override
-			public void onAdClosed() {
-				//requestNewInterstitial();
-			}
-		});
+			mInterstitialAd = new InterstitialAd(this);
+			mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+			mInterstitialAd.setAdListener(new AdListener() {
+				@Override
+				public void onAdClosed() {
+					//requestNewInterstitial();
+				}
+			});
 
-		requestNewInterstitial();
+			requestNewInterstitial();
+		}
+	}
+
+	void showInterstitialADs() {
+		if(enableADs) {
+			if (mInterstitialAd.isLoaded()) mInterstitialAd.show();
+			requestNewInterstitial();
+		}
 	}
 
 	void requestNewInterstitial() {
@@ -341,10 +320,11 @@ public class MainActivity extends AppCompatActivity {
 		//Auto updates check
 		if(data.getBoolean(autoUpdate, true)) AppUpdate.checkForUpdates(true, FirebaseRemoteConfig.getInstance(), MainActivity.this);
 
-    	if(isFirstRun) {
+    	if(data.getBoolean(firstRun, true)) {
+			Log.d(LOG_TAG, "Running app for first time");
 			try {
 				Log.d(LOG_TAG, "Initiating firstRun()");
-				if(!firstRun()) return;
+				if(!FirstTimeSetup.firstRun(this, root)) return;
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.d(LOG_TAG, "Problem in firstRun()");
@@ -361,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
     		}*/
 			blockDeviceFiles.addAll(Arrays.asList(temp));
 		}
-		blockNumber = data.getInt(defaultBlockNumber , 0);
+		int blockNumber = data.getInt(defaultBlockNumber , 0);
 		if(!blockDeviceFiles.isEmpty()) blockDevice = blockDeviceFiles.get(blockNumber);
 		Log.d(LOG_TAG, "Using "+blockDevice+" as default block");
 
@@ -420,8 +400,8 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 
-		if(requiresUnmount) showUnmountWarning();
-		if(numberOfLUNsUsed > 1) multipleLUNsWarning();
+		if(requiresUnmount) showUnmountWarning(MainActivity.this);
+		if(numberOfLUNsUsed > 1) multipleLUNsWarning(MainActivity.this);
 
 		if( !(availableLUNs.isEmpty()) && blockDevice != null && !(blockDevice.isEmpty()) && numberOfLUNsUsed!=0 ) {
 			buildCommands();
@@ -430,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
 			Log.d(LOG_TAG, "Unable to build commands.");
 			Log.d(LOG_TAG, "No. of LUNs found & selected: "+availableLUNs.size() + " & "+ numberOfLUNsUsed);
 			Log.d(LOG_TAG, "Partition Block selected: "+blockDevice);
-			noSupport();
+			noSupport(this);
 		}
 
 		runOnUiThread(new Runnable() {
@@ -441,79 +421,6 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
-	}
-
-	boolean firstRun() throws IOException, NameNotFoundException {
-
-		//TODO: Update the widget: http://stackoverflow.com/a/4412949/5002496
-
-		/* To enable Mediascan after unmounting, we need to explicitly specify
-		 the path of the external memory card */
-		if(!listAllLUNsAndBlocks) { //To not change the path if already selected by user
-			String externalSDs[] = getExternalStorageDirectories();
-			if (externalSDs != null && externalSDs.length != 0) {
-				if (externalSDs.length == 1) {
-					memoryCardPath = externalSDs[0];
-					data.edit().putString(mediaScanPath, memoryCardPath).apply();
-					enableMediaScan = true;
-					data.edit().putBoolean(mediaScanEnable, enableMediaScan).apply();
-				} else {
-					//unable to find which one is the external memory card
-					Log.d(LOG_TAG, "More than 1 path found for extSDcard");
-				}
-			} else {
-				Log.d(LOG_TAG, "Unable to find path of extSDcard");
-			}
-		}
-		//Check if 'find' binary exists; if not, ask to install busybox
-		String output = root.execute("type find");
-		if(output == null || output.trim().isEmpty() || output.trim().toLowerCase().contains("not found")) {
-			busyboxPresent = false;
-			Log.d(LOG_TAG, "'find' binary not found.");
-		} else busyboxPresent = true;
-
-		//Enumerate all the available LUNs and save it
-		checkLUNs();
-		if(availableLUNs.size() > 0) {
-			Log.d(LOG_TAG, "Found "+availableLUNs.size()+" LUNs available to use.");
-			String targetLUNs = "";
-			for(String str : availableLUNs) {
-				if(!targetLUNs.equals("")) targetLUNs += "\n";
-				targetLUNs += str;
-			}
-			data.edit().putString(LUNsFound, targetLUNs).apply();
-			data.edit().putInt(luns, availableLUNs.size()).apply();
-		}
-
-		//Enumerate all possible mountable partition blocks and save it
-		checkExtSD();
-		if(blockDeviceFiles.size() > 0) {
-			Log.d(LOG_TAG, "Found "+blockDeviceFiles.size()+" blocks available to use.");
-			String targetBlocks = "";
-			for(String str : blockDeviceFiles) {
-				if(!targetBlocks.equals("")) targetBlocks += "\n";
-				targetBlocks += str;
-			}
-			data.edit().putString(blocksList, targetBlocks).apply();
-		}
-
-		if( !(blockDeviceFiles.isEmpty()) && !(availableLUNs.isEmpty())) {
-			data.edit().putBoolean(firstRun, false).apply();
-			isFirstRun = false;
-			currentVersionNumber = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionCode;
-			data.edit().putInt(currentVersionCode, currentVersionNumber).apply();
-			Log.d(LOG_TAG,"isFirstRun set to false");
-		} else {
-			data.edit().putBoolean(firstRun, true).apply();
-			Log.d(LOG_TAG, "firstRun() will be executed next time also.");
-		}
-
-		boolean canAppWork = !blockDeviceFiles.isEmpty() && !availableLUNs.isEmpty();
-		blockDeviceFiles.clear();
-		availableLUNs.clear();
-		if(!busyboxPresent) busyboxNotFound();
-		Log.d(LOG_TAG, "Finished firstRun() successfully");
-		return canAppWork;
 	}
 
 	void checkSELinux() throws IOException {
@@ -579,272 +486,28 @@ public class MainActivity extends AppCompatActivity {
 
 	}
 
-	void checkLUNs() throws IOException {
-
-		searchLUNs();
-
-		if(availableLUNs.isEmpty()) {
-			Log.d(LOG_TAG, "No usable LUNs found.");
-
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					AlertDialog.Builder fail = new AlertDialog.Builder(MainActivity.this);
-					fail.setTitle(getString(R.string.alert_no_gadget));
-					fail.setMessage(getString(R.string.alert_no_gadget_msg));
-					fail.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							finish();
-						}
-					});
-					fail.setCancelable(false);
-					fail.create();
-					fail.show();
-				}
-			});
-		return;
-		}
-
-		String output;
-		String unsupportedLUNs = "";
-
-		for(String lun: availableLUNs) {
-			//executeAsSU("echo 0 > "+lun+"/cdrom"); //write first and see if value doesn't change
-			output = root.execute("cat "+lun+"/cdrom");
-			if(output!=null && output.equals("1")) unsupportedLUNs += "\n\n"+lun;
-		}
-
-		if(!unsupportedLUNs.isEmpty()) {
-			final String finalUnsupportedLUNs = unsupportedLUNs; //a final copy
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					AlertDialog.Builder warn = new AlertDialog.Builder(MainActivity.this);
-					warn.setTitle(getString(R.string.alert_warning));
-					warn.setMessage(getString(R.string.alert_unsupportedLUNs)+ finalUnsupportedLUNs);
-					warn.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) { }
-					});
-					warn.create();
-					warn.show();
-				}
-			});
-			return;
-		}
-	}
-
-	boolean searchLUNs() throws IOException {
-
-		availableLUNs.clear();
-		String output;
-		if(busyboxPresent) {
-
-			output = root.execute("find /sys/devices -name file -type f");
-			if (output != null && !output.trim().isEmpty()) {
-				String newLUNs[] = output.split("\n");
-				for(String LUN: newLUNs) {
-					if( LUN.contains("gadget") || LUN.contains("lun") ) availableLUNs.add(LUN.replace("/file", ""));
-				}
-			}
-		}
-
-		if((availableLUNs.isEmpty()) || listAllLUNsAndBlocks) { //If user doesn't have busybox
-			for(String str:LUNlist) {
-
-				output = root.execute("ls " + str + "/file");
-				if( output != null && output.trim().equals(str+"/file") ) {
-					availableLUNs.add(str);
-				}
-			}
-		}
-
-		if( !(availableLUNs.isEmpty()) ) {
-			data.edit().putString(LUNsToUse, "0").apply();
-		}
-
-		return !availableLUNs.isEmpty();
-
-	}
-
-	void checkExtSD() throws IOException {
-
-		listDeviceBlocks();
-
-		if(extSDpresent && blockDeviceFiles.size() > 0) {
-
-			blockNumber = 0;
-			data.edit().putInt(defaultBlockNumber, blockNumber).apply();
-			Log.d(LOG_TAG, "Selecting "+blockDeviceFiles.get(blockNumber)+" as default block.");
-
-		} else if(!extSDpresent && blockDeviceFiles.size() > 0) {
-
-			Log.d(LOG_TAG, "Default /dev/block/mmcblk1* blocks not found, but vold blocks found.");
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					AlertDialog.Builder alternate = new AlertDialog.Builder(MainActivity.this);
-					alternate.setTitle("Alternative Partition Block Found");
-					String suggestion = "Do you want to try using the vold block device: "+blockDeviceFiles.get(0)+" instead?\n\nProceed at your own risk.\nExit if you don't understand :)";
-					alternate.setMessage(suggestion);
-					alternate.setNegativeButton("Exit",new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							Log.d(LOG_TAG, "User denied using vold block.");
-							finish();
-
-						}
-					});
-
-					alternate.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							blockNumber = (blockDeviceFiles.size() > 1)? 1 : 0 ;
-							Log.d(LOG_TAG, "Selecting "+blockDeviceFiles.get(blockNumber)+" as default block.");
-							data.edit().putInt(defaultBlockNumber, blockNumber).apply();
-						}
-					});
-
-					alternate.setCancelable(false);
-					alternate.create();
-					alternate.show();
-
-
-					AlertDialog.Builder fail = new AlertDialog.Builder(MainActivity.this);
-					fail.setTitle(getString(R.string.alert_mmc_not_found));
-					fail.setMessage(getString(R.string.alert_mmc_not_found_msg));
-					fail.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-
-						}
-					});
-					fail.setCancelable(false);
-					fail.create();
-					fail.show();
-				}
-			});
-
-
-		} else {
-			Log.d(LOG_TAG, "No usable device blocks found.");
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					AlertDialog.Builder fail = new AlertDialog.Builder(MainActivity.this);
-					fail.setTitle(getString(R.string.alert_no_support));
-					fail.setMessage(getString(R.string.alert_no_blocks));
-					fail.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							finish();
-						}
-					});
-					fail.setCancelable(false);
-					fail.create();
-					fail.show();
-				}
-			});
-		}
-	}
-
-	void listDeviceBlocks() throws IOException {
-
-		blockDeviceFiles.clear();
-		String output;
-		if(busyboxPresent) {
-			Boolean mmcblk1 = false;
-			output = root.execute("find /dev/block/ -name mmcblk1*");
-			if (output != null && !output.trim().isEmpty()) {
-				String devicePoints[] = output.split("\n");
-				for(String block: devicePoints) {
-					if(block.equals(memoryCardBlock)){
-						mmcblk1 = true;
-					}else if(block.contains(memoryCardBlock)) {
-						blockDeviceFiles.add(block.trim());
-					}
-				}
-				if((blockDeviceFiles.isEmpty() && mmcblk1) || listAllLUNsAndBlocks) blockDeviceFiles.add(memoryCardBlock); //Never true
-			}
-		} else {
-			for(int i=1; i<=3; i++) {
-				output = root.execute("ls "+memoryCardBlock+"p"+i);
-				if ( output!=null && output.equals(memoryCardBlock+"p"+i) ) {
-					blockDeviceFiles.add(memoryCardBlock+"p"+i);
-				}
-			}
-			if(blockDeviceFiles.isEmpty() || listAllLUNsAndBlocks) {
-				output = root.execute("ls "+memoryCardBlock);
-				if ( output!=null && output.equals(memoryCardBlock) ) {
-					blockDeviceFiles.add(memoryCardBlock);
-				}
-			}
-		}
-
-		int defaults = blockDeviceFiles.size();
-		if(defaults > 0) {
-			extSDpresent = true;
-			data.edit().putBoolean(extSDpresence, extSDpresent).apply();
-		}
-		Boolean foundInMount = false;
-		if(defaults==0 || Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT || listAllLUNsAndBlocks) { //since Internal Storage can be mounted as UMS before KK
-
-			output = root.execute("mount | grep /dev/block/vold");
-			if(output == null || output.trim().isEmpty()) {
-				Log.d(LOG_TAG, "No vold blocks found from mount command..");
-			} else {
-				String devicePoints[] = output.split("\n");
-				for(String voldPoint: devicePoints) {
-					voldPoint = voldPoint.substring(0, voldPoint.indexOf(" "));
-					if(voldPoint.contains("/dev/block/vold") && !blockDeviceFiles.contains(voldPoint)) blockDeviceFiles.add(voldPoint);
-				}
-				if( blockDeviceFiles.size() > defaults ) foundInMount = true;
-			}
-			if(blockDeviceFiles.size() == 0 || ((Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT || listAllLUNsAndBlocks)&&!foundInMount)) {
-				output = root.execute("ls /dev/block/vold/");
-				if(output == null || output.trim().isEmpty()) {
-					Log.d(LOG_TAG, "No vold blocks found from /dev/block/vold");
-				} else {
-					String devicePoints[] = output.split("\n");
-					for(String voldPoint: devicePoints) {
-						blockDeviceFiles.add("/dev/block/vold/"+voldPoint);
-					}
-				}
-			}
-		}
-
-		if((defaults > 0 || foundInMount)&&!listAllLUNsAndBlocks) {
-			blockRecommendation = false;
-			data.edit().putBoolean(blockRecommendations, false).apply();
-		} else {
-			blockRecommendation = true;
-			data.edit().putBoolean(blockRecommendations, true).apply();
-		}
-	}
-
 	void getRootShell() {
 
 		try {
 
 			if (!RootTools.isRootAvailable()) {
 				Log.d(LOG_TAG, "It seems su binary is missing, or unable to search for it.");
-				noRootAccess(getString(R.string.error_su_not_found)+" \n"+getString(R.string.error_no_root));
+				noRootAccess(getString(R.string.error_su_not_found)+" \n"+getString(R.string.error_no_root), this);
 				return;
 			}
 			Log.d(LOG_TAG, "Requesting for Root Access..");
 			rootShell = RootTools.getShell(true);
 
 		} catch (IOException e) {
-			noRootAccess(getString(R.string.error_root_not_granted));
+			noRootAccess(getString(R.string.error_root_not_granted), this);
 			e.printStackTrace();
 		} catch (TimeoutException e) {
 			Log.d(LOG_TAG, "Timeout waiting for Root Access..");
-			noRootAccess(getString(R.string.error_root_timeout));
+			noRootAccess(getString(R.string.error_root_timeout), this);
 			e.printStackTrace();
 		} catch (RootDeniedException e) {
 			Log.d(LOG_TAG, "Denied Root Access..");
-			noRootAccess(getString(R.string.error_root_denied));
+			noRootAccess(getString(R.string.error_root_denied), this);
 			e.printStackTrace();
 		}
 	}
@@ -918,20 +581,6 @@ public class MainActivity extends AppCompatActivity {
 		USBstatus = (TextView) findViewById(R.id.textView2);
 		if(rootAccess) updateUSBconfig();
 
-		/*ums.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				executeAsSU(clearLUN+"\n"+CDprop+"\n"+enableMSG+"\n"+UMSlegacy+"\n"+UMSconfig+"\n"+UMSprop+(enableADB?",adb":""));
-				Toast.makeText(getApplicationContext(), "Mass Storage Enabled!!", Toast.LENGTH_SHORT).show();
-				USBconfig = "mass_storage"+(enableADB?",adb":"");
-				USBmode.setText(Html.fromHtml("USB Config: <b>"+USBconfig+"</b>" ));
-				ums.setBackgroundResource(R.drawable.usb_on);
-				arg0.startAnimation(animAlpha);
-
-			}
-		});*/
-
-
 		mtp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -976,42 +625,6 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
         });
-
-		/*class backgroundTask extends AsyncTask<Void, Void, Void> {
-			@Override
-			protected Void doInBackground(Void... params) {
-				Intent intent = getApplicationContext().registerReceiver(null, new IntentFilter("android.hardware.usb.action.USB_STATE"));
-	        	Boolean prev = intent.getExtras().getBoolean("connected");
-	        	while(true) {
-	        		if(!foreground) break;
-	        		intent = getApplicationContext().registerReceiver(null, new IntentFilter("android.hardware.usb.action.USB_STATE"));
-	        		USBconnected = intent.getExtras().getBoolean("connected");
-	        		if(USBconnected != prev) {
-
-						boolean post = USBstatus.post(new Runnable() {
-							public void run() {
-								USBstatus.setText(Html.fromHtml("USB Status: <b>" + (USBconnected ? "" : "DIS") + "CONNECTED</b>"));
-							}
-						});
-
-						prev = USBconnected;
-
-	        			try {
-							Thread.sleep(2500);
-						} catch (InterruptedException e) { e.printStackTrace(); }
-	        		}
-
-	        	}
-				return null;
-			}
-			@Override
-			protected void onPostExecute(Void params) {
-				foreground = false;
-			}
-
-		}
-
-		new backgroundTask().execute();*/
 
 	}
 
@@ -1093,8 +706,7 @@ public class MainActivity extends AppCompatActivity {
 									break;
 								case 103:
 									startActivity(new Intent(MainActivity.this, AdvancedOptions.class));
-									if (mInterstitialAd.isLoaded()) mInterstitialAd.show();
-									requestNewInterstitial();
+									showInterstitialADs();
 									break;
 								case 104:
 									executeAsSU("setenforce 1");
@@ -1106,13 +718,15 @@ public class MainActivity extends AppCompatActivity {
 									AppUpdate.checkForUpdates(false, FirebaseRemoteConfig.getInstance(), MainActivity.this);
 									break;
 								case 107:
-									if (mInterstitialAd.isLoaded()) {
-										mInterstitialAd.show();
-										Toast.makeText(getApplicationContext(), R.string.toast_thanks+" :)", Toast.LENGTH_SHORT).show();
-									} else {
-										Toast.makeText(getApplicationContext(), R.string.toast_internet_problem, Toast.LENGTH_SHORT).show();
+									if(enableADs) {//TODO: showInterstitial()
+										if (mInterstitialAd.isLoaded()) {
+											mInterstitialAd.show();
+											Toast.makeText(getApplicationContext(), R.string.toast_thanks + " :)", Toast.LENGTH_SHORT).show();
+										} else {
+											Toast.makeText(getApplicationContext(), R.string.toast_internet_problem, Toast.LENGTH_SHORT).show();
+										}
+										requestNewInterstitial();
 									}
-									requestNewInterstitial();
 									break;
 							}
 						}
@@ -1229,81 +843,13 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	@Nullable
-	public String[] getExternalStorageDirectories() {
-		// http://stackoverflow.com/a/39372019/5002496
-		String [] storageDirectories = null;
-		List<String> results = new ArrayList<>();
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			File[] externalDirs = getExternalFilesDirs(null);
-			if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				for (File file : externalDirs) {
-					String path = file.getPath().split("/Android")[0];
-					if (Environment.isExternalStorageRemovable(file)) {
-						results.add(path);
-					}
-				}
-			} else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-				for (File file : externalDirs) {
-					String path = file.getPath().split("/Android")[0];
-					if (Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(file))) {
-						results.add(path);
-					}
-				}
-			}
-		}
-		if(results.isEmpty()){
-			/* TODO: implement this: http://stackoverflow.com/a/40123073/5002496 */
-			if(rootAccess) {
-				String output = null;
-				try {
-					output = root.execute("mount | grep /dev/block/vold");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if(output == null || output.trim().isEmpty()) {
-					//Log.d(LOG_TAG, "No vold blocks found from mount command..");
-				} else {
-					Log.d(LOG_TAG, "WTF..\n"+output);
-					String devicePoints[] = output.split("\n");
-					for(String voldPoint: devicePoints) {
-						results.add(voldPoint.split(" ")[2]);
-					}
-				}
-			}
-		}
-
-		//Remove paths which may not be external memory card, like OTG (feel free to comment them out)
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			for (int i = 0; i < results.size(); i++) {
-				if (!results.get(i).toLowerCase().matches(".*[0-9a-f]{4}[-][0-9a-f]{4}")) {
-					Log.d(LOG_TAG, results.get(i) + " might not be extSDcard");
-					results.remove(i--);
-				}
-			}
-		} else {
-			for (int i = 0; i < results.size(); i++) {
-				if (!results.get(i).toLowerCase().contains("ext") && !results.get(i).toLowerCase().contains("sdcard")) {
-					Log.d(LOG_TAG, results.get(i)+" might not be extSDcard");
-					results.remove(i--);
-				}
-			}
-		}
-
-		storageDirectories = new String[results.size()];
-		for(int i=0; i<results.size(); ++i) storageDirectories[i] = results.get(i);
-
-		return storageDirectories;
-	}
-
 	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        super.onActivityResult(requestCode, resultCode, resultData);
 		//TODO: wrote this in a hurry, have to rewrite using resultCode
 		if(listAllLUNsAndBlocks) {
 			setContentView(R.layout.activity_empty);
-			isFirstRun=true;
+			data.edit().putBoolean(firstRun, true).apply();
 			try {
 				continueExec();
 			} catch (final Exception ex) {
@@ -1315,8 +861,8 @@ public class MainActivity extends AppCompatActivity {
 		}
         buildCommands();
 		setPermissions(false);
-        if(requiresUnmount && blockRecommendation) showUnmountWarning();
-        if(numberOfLUNsUsed > 1) multipleLUNsWarning();
+        if(requiresUnmount && blockRecommendation) showUnmountWarning(this);
+        if(numberOfLUNsUsed > 1) multipleLUNsWarning(this);
     }
 
 	void executeAsSU(final String command) {
@@ -1351,31 +897,6 @@ public class MainActivity extends AppCompatActivity {
 
 	}
 
-	void noRootAccess(final String rootDetails) {
-
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Toast.makeText(getApplicationContext(), rootDetails, Toast.LENGTH_SHORT).show();
-				Toast.makeText(getApplicationContext(), getString(R.string.toast_no_root), Toast.LENGTH_SHORT);
-				AlertDialog.Builder fail = new AlertDialog.Builder(MainActivity.this);
-				fail.setTitle(getString(R.string.toast_no_root));
-				CharSequence msg = getString(R.string.error_msg)+" \""+rootDetails+"\"\n\n"+getString(R.string.error_details)+"\n"+getString(R.string.alert_no_root_msg);
-				fail.setMessage(msg);
-				fail.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {
-						finish();
-					}
-				});
-
-				fail.setCancelable(false);
-				fail.create();
-				fail.show();
-			}
-		});
-	}
-
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -1406,104 +927,6 @@ public class MainActivity extends AppCompatActivity {
 
 				break;
 		}
-	}
-
-	void noSupport() {
-
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				AlertDialog.Builder fail = new AlertDialog.Builder(MainActivity.this);
-				fail.setTitle("App Failed");
-				String msg;
-				if(availableLUNs.isEmpty()) msg = getString(R.string.alert_no_gadget_msg);
-				else if(blockDevice==null || blockDevice.isEmpty()) msg = getString(R.string.alert_mmc_not_found_msg);
-				else msg = getString(R.string.error_unknown);
-				fail.setMessage(msg);
-				fail.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {
-						finish();
-					}
-				});
-
-				fail.setCancelable(false);
-				fail.create();
-				fail.show();
-			}
-		});
-
-		if(!busyboxPresent) busyboxNotFound();
-	}
-
-	void busyboxNotFound() {
-
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				AlertDialog.Builder fail = new AlertDialog.Builder(MainActivity.this);
-				fail.setTitle(getString(R.string.alert_no_busybox));
-				fail.setMessage(getString(R.string.alert_no_busybox_msg));
-				fail.setNegativeButton(getString(R.string.action_later), new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {	}
-				});
-
-				fail.setPositiveButton(getString(R.string.action_install_busybox),new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {
-						try {
-							startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=stericson.busybox")));
-						} catch (android.content.ActivityNotFoundException e) {
-							startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=stericson.busybox")));
-						}
-					}
-				});
-
-				fail.setCancelable(false);
-				fail.create();
-				fail.show();
-			}
-		});
-
-	}
-
-	void multipleLUNsWarning() {
-
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				AlertDialog.Builder warning = new AlertDialog.Builder(MainActivity.this);
-				warning.setTitle(R.string.alert_warning);
-				warning.setMessage(getString(R.string.alert_multi_luns_msg));
-				warning.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {  }
-				});
-
-				warning.create();
-				warning.show();
-			}
-		});
-	}
-
-	void showUnmountWarning() {
-
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				AlertDialog.Builder warn = new AlertDialog.Builder(MainActivity.this);
-				warn.setTitle(R.string.alert_warning);
-				String msg = getString(R.string.alert_block_notrecommended)+"\n\n"+getString(R.string.alert_unmount);
-				warn.setMessage(msg);
-				warn.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {   }
-				});
-				warn.create();
-				warn.show();
-			}
-		});
 	}
 
 	@Override

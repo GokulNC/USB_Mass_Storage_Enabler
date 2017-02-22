@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gokulnc.ums_universal"
     android:installLocation="auto"
-    android:versionCode="26"
-    android:versionName="1.6.1">
+    android:versionCode="27"
+    android:versionName="1.6.2">
 
     <uses-feature android:name="android.hardware.usb.host" />
 

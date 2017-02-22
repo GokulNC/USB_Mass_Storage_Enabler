@@ -41,22 +41,23 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
         Log.d(MainActivity.LOG_TAG, "Received Broadcast: "+action);
         if(data==null) data = context.getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
 
-        if(data.getBoolean(MainActivity.autoStart, false) && !MainActivity.isAppOpen && action.equalsIgnoreCase(usbStateChangeAction) && (new Date().getTime()-lastAccessTime > 1500 || lastAccessTime==Long.MAX_VALUE)) {
-            if(intent.getBooleanExtra("connected", false)) enableUMS(context);
-            else disableUMS(context, true);
+        if(data.getBoolean(MainActivity.autoStart, false) && !MainActivity.isAppOpen && action.equalsIgnoreCase(usbStateChangeAction)) {
+            if(intent.getBooleanExtra("connected", false)) toggleUMS(true, false, context);
+            else toggleUMS(false, true, context);
         } else if(action.equalsIgnoreCase(intentEnableUMS)) {
             if(intent.getBooleanExtra("fromWidget", false) && !data.getBoolean(MainActivity.widgetEnabled, false)) {
                 data.edit().putBoolean(MainActivity.widgetEnabled, true).apply();
                 return; //all this bullshit to ignore the onUpdate() from widget when widget created for first time
             }
-            enableUMS(context);
+            toggleUMS(true, false, context);
         } else if(action.equalsIgnoreCase(intentDisableUMS)) {
             if(intent.getBooleanExtra("fromWidget", false) && !data.getBoolean(MainActivity.widgetEnabled, false)) {
                 data.edit().putBoolean(MainActivity.widgetEnabled, true).apply();
                 return;
             }
+            //Notification will not be removed when toggled from Notification
             boolean removeNotif = intent.getBooleanExtra("removeNotif", true);
-            disableUMS(context, removeNotif);
+            toggleUMS(false, removeNotif, context);
         //} else if(action.equalsIgnoreCase("android.intent.action.BOOT_COMPLETED")) {
 
         } else if(action.equalsIgnoreCase(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
@@ -83,7 +84,7 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
                 context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.XdaThreadURL)));
             }*/
 
-        //install.setDataAndType(downloadedApk, dlMgr.getMimeTypeForDownloadedFile(downloadId)); //treats as a zip, lol
+        //install.setDataAndType(downloadedApk, dlMgr.getMimeTypeForDownloadedFile(downloadId)); //treats apk as a zip, lol
         Uri downloadedApk = dlMgr.getUriForDownloadedFile(downloadId);
         install.setDataAndType(getFileUriFromUri(context, downloadedApk) , "application/vnd.android.package-archive");
         //MIME-type referred here: http://stackoverflow.com/questions/20065040/download-installing-and-delete-apk-file-on-android-device-programmatically-fro
@@ -121,6 +122,14 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
         context.startActivity(i);
     }
 
+    boolean toggleUMS(boolean enableUMS, boolean removeNotif, Context context) {
+        if(new Date().getTime()-lastAccessTime > 1500 || lastAccessTime==Long.MAX_VALUE) {
+            lastAccessTime = new Date().getTime();
+            return enableUMS?enableUMS(context):disableUMS(context, removeNotif);
+        }
+        return false;
+    }
+
     boolean enableUMS(Context context) {
         try {
             String enableCommand = data.getString(MainActivity.setPermissionCmds, "")+"\n"+data.getString(MainActivity.enableUMScmds, "");
@@ -141,7 +150,6 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
         Toast.makeText(context, context.getString(R.string.toast_ums_enabled), Toast.LENGTH_SHORT).show();
         isUMSdisabled = false;
         showNotification(context);
-        lastAccessTime = new Date().getTime();
         return true;
     }
 
@@ -166,7 +174,6 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
         if(removeNotif) removeNotification(context);
         else showNotification(context);
         //TODO: if(MainActivity.isAppOpen) MainActivity.updateUSBconfig(); //When toggled from notif
-        lastAccessTime = new Date().getTime();
         return true;
     }
 

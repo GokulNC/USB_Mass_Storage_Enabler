@@ -1,5 +1,6 @@
 /.gradle/*
 /.idea/*
+/All_Versions_APKs
 /app/*
 bin/
 /build/
