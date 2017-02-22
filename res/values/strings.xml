@@ -153,11 +153,7 @@ Make sure you are connected to the Internet.</string>
     <string name="asset_help_html">help.html</string>
     <string name="nnf_need_valid_filename">Select Proper Filename</string>
 
-    <string name="banner_ad_unit_id">ca-app-pub-1067658817574197/9781768067</string>
-    <string name="banner_ad_unit_id2">ca-app-pub-1067658817574197/7868468860</string>
-    <string name="banner_ad_unit_id3">ca-app-pub-1067658817574197/7030864065</string>
-    <string name="interstitial_ad_unit_id">ca-app-pub-1067658817574197/1883398061</string>
-    <string name="ad_app_id">ca-app-pub-1067658817574197~6828301660</string>
+    
     <string name="alert_to_stop_autoupdate">(You can disable automatic update check from Settings.)</string>
     <string name="toast_open_app_once">Open the app atleast once</string>
     <string name="action_add_block_manually">Add Block file manually</string>
@@ -170,5 +166,12 @@ Make sure you are connected to the Internet.</string>
     <string name="alert_update_download_permission_failed">You have denied the permission to download the updated APK</string>
     <string name="toast_downloading">Downloading</string>
     <string name="alert_block_notrecommended">You are using a device block which is not recommended (instead of its corresponding recommended partition)</string>
+    
+    
+    <string name="banner_ad_unit_id">ca-app-pub-1067658817574197/9781768067</string>
+    <string name="banner_ad_unit_id2">ca-app-pub-1067658817574197/7868468860</string>
+    <string name="banner_ad_unit_id3">ca-app-pub-1067658817574197/7030864065</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-1067658817574197/1883398061</string>
+    <string name="ad_app_id">ca-app-pub-1067658817574197~6828301660</string>
 
 </resources>

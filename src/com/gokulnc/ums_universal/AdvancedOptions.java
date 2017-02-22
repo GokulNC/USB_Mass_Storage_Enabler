@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -31,6 +32,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
+import java.util.Arrays;
+import static com.gokulnc.ums_universal.Constants.*;
 
 
 public class AdvancedOptions extends AppCompatActivity {
@@ -45,8 +48,9 @@ public class AdvancedOptions extends AppCompatActivity {
 	Switch adb, disableNotifs, enableAutoStart, enableMediaScanner, autoUpdateCheck;
 	Button save, selectDir;
 	TextView dir;
-	String blockSuggestion = "";
+	String blockSuggestion = "", memoryCardPath="";
 	static int blockNum = -1;
+	SharedPreferences data = MainActivity.data;
 	//Map<Integer, Integer> radioGroupToBlockMap; //not working currently, so setting id directly, bad practice though
 
 	@Override
@@ -56,10 +60,10 @@ public class AdvancedOptions extends AppCompatActivity {
 		ll = (LinearLayout) findViewById(R.id.advancedlinearlayout);
 		cbCount = MainActivity.availableLUNs.size();
 		rbCount = MainActivity.blockDeviceFiles.size();
-		if(MainActivity.data==null) MainActivity.data= getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-		//ll.removeAllViews(); //not really necessary
-		ll.setOrientation(LinearLayout.VERTICAL);
-		ll.setPadding(20, 20, 20, 20);
+		if(data==null) data= getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+		memoryCardPath = data.getString(mediaScanPath, "");
+
+		//ll.setPadding(20, 20, 20, 20);
 		//ll.setBackgroundColor(Color.parseColor("#000000"));
 		radioGroup = new RadioGroup(this);
 		rbCount = MainActivity.blockDeviceFiles.size();
@@ -69,27 +73,23 @@ public class AdvancedOptions extends AppCompatActivity {
 		rb = new RadioButton[rbCount];
 
 		adb = (Switch) findViewById(R.id.switch1);
-		adb.setTypeface(null, Typeface.BOLD);
 		adb.setChecked(MainActivity.enableADB);
 
 		disableNotifs = (Switch) findViewById(R.id.switch2);
-		disableNotifs.setTypeface(null, Typeface.BOLD);
 		disableNotifs.setChecked(!MainActivity.enableNotifications);
 
 		enableAutoStart = (Switch) findViewById(R.id.switch3);
-		enableAutoStart.setTypeface(null, Typeface.BOLD);
-		enableAutoStart.setChecked(MainActivity.data.getBoolean(MainActivity.autoStart, false));
+		enableAutoStart.setChecked(data.getBoolean(autoStart, false));
 
 		autoUpdateCheck = (Switch) findViewById(R.id.switch4);
-		autoUpdateCheck.setTypeface(null, Typeface.BOLD);
-		autoUpdateCheck.setChecked(MainActivity.data.getBoolean(MainActivity.autoUpdate, true));
+		autoUpdateCheck.setChecked(data.getBoolean(autoUpdate, true));
 
 		enableMediaScanner = (Switch) findViewById(R.id.switch5);
-		enableMediaScanner.setTypeface(null, Typeface.BOLD);
-		enableMediaScanner.setChecked(MainActivity.data.getBoolean(MainActivity.mediaScanEnable, false));
+		enableMediaScanner.setChecked(data.getBoolean(mediaScanEnable, false));
+
 		selectDir = (Button) findViewById(R.id.button3);
 		dir = (TextView) findViewById(R.id.textView);
-		dir.setText(getString(R.string.settings_layout_mediascan_path)+": "+MainActivity.memoryCardPath.replace("file://",""));
+		dir.setText(getString(R.string.settings_layout_mediascan_path)+": "+memoryCardPath.replace("file://",""));
 		if(enableMediaScanner.isChecked()) {
 			selectDir.setVisibility(View.VISIBLE);
 			dir.setVisibility(View.VISIBLE);
@@ -99,7 +99,7 @@ public class AdvancedOptions extends AppCompatActivity {
 				if(isChecked) {
 					selectDir.setVisibility(View.VISIBLE);
 					dir.setVisibility(View.VISIBLE);
-					dir.setText(getString(R.string.settings_layout_mediascan_path)+": "+MainActivity.memoryCardPath.replace("file://",""));
+					dir.setText(getString(R.string.settings_layout_mediascan_path)+": "+memoryCardPath.replace("file://",""));
 				} else {
 					selectDir.setVisibility(View.GONE);
 					dir.setVisibility(View.GONE);
@@ -136,7 +136,7 @@ public class AdvancedOptions extends AppCompatActivity {
 			//radioGroupToBlockMap.put(rb[i].getId(), i);
 			rb[i].setId(i);
 			radioGroup.addView(rb[i], i);
-			if( MainActivity.blockDeviceFiles.get(i).equals( MainActivity.blockDeviceFiles.get(MainActivity.data.getInt(MainActivity.defaultBlockNumber, -1)))) {
+			if( MainActivity.blockDeviceFiles.get(i).equals( MainActivity.blockDeviceFiles.get(data.getInt(defaultBlockNumber, -1)))) {
 				radioGroup.check(radioGroup.getChildAt(i).getId());
 				//Toast.makeText(getApplicationContext(), "id: "+radioGroup.getChildAt(i).getId(), Toast.LENGTH_SHORT).show();
 			}
@@ -155,33 +155,34 @@ public class AdvancedOptions extends AppCompatActivity {
 		
 		save = new Button(this);
 		save.setText(getString(R.string.action_save_close));
+		//To save all the options selected:
 		save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
 
 				if(adb.isChecked() != MainActivity.enableADB) {
 					MainActivity.enableADB = adb.isChecked();
-					MainActivity.data.edit().putBoolean(MainActivity.ADBenable, MainActivity.enableADB).apply();
+					data.edit().putBoolean(ADBenable, MainActivity.enableADB).apply();
 				}
 
 				if(disableNotifs.isChecked() == MainActivity.enableNotifications) {
 					MainActivity.enableNotifications = !disableNotifs.isChecked();
-					MainActivity.data.edit().putBoolean(MainActivity.NotifsEnable, MainActivity.enableNotifications).apply();
+					data.edit().putBoolean(NotifsEnable, MainActivity.enableNotifications).apply();
 				}
 
-				MainActivity.data.edit().putBoolean(MainActivity.autoStart, enableAutoStart.isChecked()).apply();
-				MainActivity.data.edit().putBoolean(MainActivity.autoUpdate, autoUpdateCheck.isChecked()).apply();
+				data.edit().putBoolean(autoStart, enableAutoStart.isChecked()).apply();
+				data.edit().putBoolean(autoUpdate, autoUpdateCheck.isChecked()).apply();
 
 				MainActivity.enableMediaScan = enableMediaScanner.isChecked();
-				MainActivity.data.edit().putBoolean(MainActivity.mediaScanEnable, MainActivity.enableMediaScan).apply();
-				MainActivity.data.edit().putString(MainActivity.mediaScanPath, MainActivity.memoryCardPath).apply();
+				data.edit().putBoolean(mediaScanEnable, MainActivity.enableMediaScan).apply();
+				data.edit().putString(mediaScanPath, memoryCardPath).apply();
 
 				//Save Selected Partition Block:
             	if(blockNum != -1) {
             		MainActivity.requiresUnmount = !MainActivity.recommendedBlocks[blockNum];
-            		MainActivity.data.edit().putInt(MainActivity.defaultBlockNumber, blockNum).apply();
+            		data.edit().putInt(defaultBlockNumber, blockNum).apply();
             		MainActivity.blockDevice = MainActivity.blockDeviceFiles.get(blockNum);
-            		Log.d(MainActivity.LOG_TAG, "Advanced: Selected "+MainActivity.blockDeviceFiles.get(blockNum)+" as Default Block.");
+            		Log.d(LOG_TAG, "Advanced: Selected "+MainActivity.blockDeviceFiles.get(blockNum)+" as Default Block.");
             	}
 
 				//Save Selected LUNs:
@@ -195,11 +196,11 @@ public class AdvancedOptions extends AppCompatActivity {
             			writeDefaults += i;
             		} else MainActivity.enabledLUNs[i] = false;
             	}
-            	Log.d(MainActivity.LOG_TAG, "Advanced: Selected no. of LUNs - "+count);
+            	Log.d(LOG_TAG, "Advanced: Selected no. of LUNs - "+count);
             	if(count!=0 && !writeDefaults.isEmpty()) {
-            		MainActivity.data.edit().putString(MainActivity.LUNsToUse, writeDefaults).apply();
+            		data.edit().putString(LUNsToUse, writeDefaults).apply();
             		MainActivity.numberOfLUNsUsed = count;
-            		Log.d(MainActivity.LOG_TAG, "Saved Advanced Settings.");
+            		Log.d(LOG_TAG, "Saved Advanced Settings.");
             	} else {
             		Toast.makeText(getApplicationContext(), getString(R.string.toast_zero_luns), Toast.LENGTH_SHORT).show();
             		return;
@@ -232,7 +233,7 @@ public class AdvancedOptions extends AppCompatActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == ROOT_DIR_REQ_CODE && resultCode == Activity.RESULT_OK) {
 			Uri uri = data.getData();
-			MainActivity.memoryCardPath = uri.toString();
+			memoryCardPath = uri.toString();
 			dir.setText(getString(R.string.settings_layout_mediascan_path)+": "+uri.toString().replace("file://", ""));
 		}else if(requestCode == BLOCK_FILE_REQ_CODE && resultCode == Activity.RESULT_OK) {
 			addBlockManually(data.getData().toString().replace("file://",""));
@@ -247,14 +248,14 @@ public class AdvancedOptions extends AppCompatActivity {
 
 			AdView mAdView1 = (AdView) findViewById(R.id.adViewInSettingsBottom);
 			mAdView1.loadAd(new AdRequest.Builder().build());
-			Log.d(MainActivity.LOG_TAG, "Ads initialized in Settings Activity..");
+			Log.d(LOG_TAG, "Ads initialized in Settings Activity..");
 		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(MainActivity.data==null) MainActivity.data= getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+		if(data==null) data= getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 		initADs();
 	}
 
@@ -303,9 +304,13 @@ public class AdvancedOptions extends AppCompatActivity {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
 						MainActivity.blockDeviceFiles.add(path);
-						String blocks = MainActivity.data.getString(MainActivity.blocksList, null);
-						blocks += "\n" + path;
-						MainActivity.data.edit().putString(MainActivity.blocksList, blocks).apply();
+						String blocks = data.getString(blocksList, null);
+						blocks += "\n" + path; //Add the block to SharedPref
+						data.edit().putString(blocksList, blocks).apply();
+						if(MainActivity.blockRecommendation) {
+							MainActivity.recommendedBlocks = Arrays.copyOf(MainActivity.recommendedBlocks, rbCount + 1);
+							MainActivity.recommendedBlocks[rbCount] = false;
+						}
 						recreate();
 					}
 				})

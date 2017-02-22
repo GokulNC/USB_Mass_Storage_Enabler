@@ -18,8 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.gokulnc.ums_universal.MainActivity.memoryCardBlock;
+import static com.gokulnc.ums_universal.Constants.*;
 
 class FirstTimeSetup {
 
@@ -60,7 +59,7 @@ class FirstTimeSetup {
         Context context = activity.getApplicationContext();
 
         //TODO: Update the widget: http://stackoverflow.com/a/4412949/5002496
-        data = context.getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+        data = context.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
 		/* To enable Mediascan after unmounting, we need to explicitly specify
 		 the path of the external memory card */
@@ -68,70 +67,69 @@ class FirstTimeSetup {
             String externalSDs[] = FirstTimeSetup.getExternalStorageDirectories(context, root);
             if (externalSDs != null && externalSDs.length != 0) {
                 if (externalSDs.length == 1) {
-                    MainActivity.memoryCardPath = externalSDs[0];
-                    data.edit().putString(MainActivity.mediaScanPath, MainActivity.memoryCardPath).apply();
+                    data.edit().putString(mediaScanPath, externalSDs[0]).apply();
                     MainActivity.enableMediaScan = true;
-                    data.edit().putBoolean(MainActivity.mediaScanEnable, MainActivity.enableMediaScan).apply();
+                    data.edit().putBoolean(mediaScanEnable, MainActivity.enableMediaScan).apply();
                 } else {
                     //unable to find which one is the external memory card
-                    Log.d(MainActivity.LOG_TAG, "More than 1 path found for extSDcard");
+                    Log.d(LOG_TAG, "More than 1 path found for extSDcard");
                 }
             } else {
-                Log.d(MainActivity.LOG_TAG, "Unable to find path of extSDcard");
+                Log.d(LOG_TAG, "Unable to find path of extSDcard");
             }
         }
         //Check if 'find' binary exists; if not, ask to install busybox
         String output = root.execute("type find");
         if(output == null || output.trim().isEmpty() || output.trim().toLowerCase().contains("not found")) {
             busyboxPresent = false;
-            Log.d(MainActivity.LOG_TAG, "'find' binary not found.");
+            Log.d(LOG_TAG, "'find' binary not found.");
         } else busyboxPresent = true;
 
         //Enumerate all the available LUNs and save it
         checkLUNs(activity, context, root);
         if(availableLUNs.size() > 0) {
-            Log.d(MainActivity.LOG_TAG, "Found "+availableLUNs.size()+" LUNs available to use.");
+            Log.d(LOG_TAG, "Found "+availableLUNs.size()+" LUNs available to use.");
             String targetLUNs = "";
             for(String str : availableLUNs) {
                 if(!targetLUNs.equals("")) targetLUNs += "\n";
                 targetLUNs += str;
             }
-            data.edit().putString(MainActivity.LUNsFound, targetLUNs).apply();
-            data.edit().putInt(MainActivity.luns, availableLUNs.size()).apply();
+            data.edit().putString(LUNsFound, targetLUNs).apply();
+            data.edit().putInt(luns, availableLUNs.size()).apply();
         }
 
         if( !(availableLUNs.isEmpty()) ) {
-            data.edit().putString(MainActivity.LUNsToUse, "0").apply();
+            data.edit().putString(LUNsToUse, "0").apply();
         }
 
         //Enumerate all possible mountable partition blocks and save it
         checkExtSD(activity, context, root);
         if(blockDeviceFiles.size() > 0) {
             
-            Log.d(MainActivity.LOG_TAG, "Found "+blockDeviceFiles.size()+" blocks available to use.");
+            Log.d(LOG_TAG, "Found "+blockDeviceFiles.size()+" blocks available to use.");
             String targetBlocks = "";
             for(String str : blockDeviceFiles) {
                 if(!targetBlocks.equals("")) targetBlocks += "\n";
                 targetBlocks += str;
             }
-            data.edit().putString(MainActivity.blocksList, targetBlocks).apply();
+            data.edit().putString(blocksList, targetBlocks).apply();
         }
 
         if( !(blockDeviceFiles.isEmpty()) && !(availableLUNs.isEmpty())) {
-            data.edit().putBoolean(MainActivity.firstRun, false).apply();
+            data.edit().putBoolean(firstRun, false).apply();
             MainActivity.currentVersionNumber = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionCode;
-            data.edit().putInt(MainActivity.currentVersionCode, MainActivity.currentVersionNumber).apply();
-            Log.d(MainActivity.LOG_TAG,"isFirstRun set to false");
+            data.edit().putInt(currentVersionCode, MainActivity.currentVersionNumber).apply();
+            Log.d(LOG_TAG,"isFirstRun set to false");
         } else {
-            data.edit().putBoolean(MainActivity.firstRun, true).apply();
-            Log.d(MainActivity.LOG_TAG, "firstRun() will be executed next time also.");
+            data.edit().putBoolean(firstRun, true).apply();
+            Log.d(LOG_TAG, "firstRun() will be executed next time also.");
         }
 
         boolean canAppWork = !blockDeviceFiles.isEmpty() && !availableLUNs.isEmpty();
         blockDeviceFiles.clear();
         availableLUNs.clear();
         if(!busyboxPresent) busyboxNotFound(activity);
-        Log.d(MainActivity.LOG_TAG, "Finished firstRun() successfully");
+        Log.d(LOG_TAG, "Finished firstRun() successfully");
         return canAppWork;
     }
 
@@ -169,9 +167,9 @@ class FirstTimeSetup {
                     e.printStackTrace();
                 }
                 if(output == null || output.trim().isEmpty()) {
-                    //Log.d(MainActivity.LOG_TAG, "No vold blocks found from mount command..");
+                    //Log.d(LOG_TAG, "No vold blocks found from mount command..");
                 } else {
-                    Log.d(MainActivity.LOG_TAG, "WTF..\n"+output);
+                    Log.d(LOG_TAG, "WTF..\n"+output);
                     String devicePoints[] = output.split("\n");
                     for(String voldPoint: devicePoints) {
                         results.add(voldPoint.split(" ")[2]);
@@ -184,14 +182,14 @@ class FirstTimeSetup {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (int i = 0; i < results.size(); i++) {
                 if (!results.get(i).toLowerCase().matches(".*[0-9a-f]{4}[-][0-9a-f]{4}")) {
-                    Log.d(MainActivity.LOG_TAG, results.get(i) + " might not be extSDcard");
+                    Log.d(LOG_TAG, results.get(i) + " might not be extSDcard");
                     results.remove(i--);
                 }
             }
         } else {
             for (int i = 0; i < results.size(); i++) {
                 if (!results.get(i).toLowerCase().contains("ext") && !results.get(i).toLowerCase().contains("sdcard")) {
-                    Log.d(MainActivity.LOG_TAG, results.get(i)+" might not be extSDcard");
+                    Log.d(LOG_TAG, results.get(i)+" might not be extSDcard");
                     results.remove(i--);
                 }
             }
@@ -208,7 +206,7 @@ class FirstTimeSetup {
         searchLUNs(root);
 
         if(availableLUNs.isEmpty()) {
-            Log.d(MainActivity.LOG_TAG, "No usable LUNs found.");
+            Log.d(LOG_TAG, "No usable LUNs found.");
 
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -293,11 +291,11 @@ class FirstTimeSetup {
         boolean extSDpresent = listDeviceBlocks(root);
 
         if(extSDpresent && blockDeviceFiles.size() > 0) {
-            data.edit().putInt(MainActivity.defaultBlockNumber, 0).apply();
-            Log.d(MainActivity.LOG_TAG, "Selecting "+blockDeviceFiles.get(0)+" as default block.");
+            data.edit().putInt(defaultBlockNumber, 0).apply();
+            Log.d(LOG_TAG, "Selecting "+blockDeviceFiles.get(0)+" as default block.");
         } else if(!extSDpresent && blockDeviceFiles.size() > 0) {
 
-            Log.d(MainActivity.LOG_TAG, "Default /dev/block/mmcblk1* blocks not found, but vold blocks found.");
+            Log.d(LOG_TAG, "Default /dev/block/mmcblk1* blocks not found, but vold blocks found.");
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -308,7 +306,7 @@ class FirstTimeSetup {
                     alternate.setNegativeButton("Exit",new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            Log.d(MainActivity.LOG_TAG, "User denied using vold block.");
+                            Log.d(LOG_TAG, "User denied using vold block.");
                             activity.finish();
 
                         }
@@ -318,8 +316,8 @@ class FirstTimeSetup {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
                             int blockNumber = (blockDeviceFiles.size() > 1)? 1 : 0 ;
-                            Log.d(MainActivity.LOG_TAG, "Selecting "+blockDeviceFiles.get(blockNumber)+" as default block.");
-                            data.edit().putInt(MainActivity.defaultBlockNumber, blockNumber).apply();
+                            Log.d(LOG_TAG, "Selecting "+blockDeviceFiles.get(blockNumber)+" as default block.");
+                            data.edit().putInt(defaultBlockNumber, blockNumber).apply();
                         }
                     });
 
@@ -345,7 +343,7 @@ class FirstTimeSetup {
 
 
         } else {
-            Log.d(MainActivity.LOG_TAG, "No usable device blocks found.");
+            Log.d(LOG_TAG, "No usable device blocks found.");
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -409,7 +407,7 @@ class FirstTimeSetup {
 
             output = root.execute("mount | grep /dev/block/vold");
             if(output == null || output.trim().isEmpty()) {
-                Log.d(MainActivity.LOG_TAG, "No vold blocks found from mount command..");
+                Log.d(LOG_TAG, "No vold blocks found from mount command..");
             } else {
                 String devicePoints[] = output.split("\n");
                 for(String voldPoint: devicePoints) {
@@ -421,7 +419,7 @@ class FirstTimeSetup {
             if(blockDeviceFiles.size() == 0 || ((Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT || MainActivity.listAllLUNsAndBlocks)&&!foundInMount)) {
                 output = root.execute("ls /dev/block/vold/");
                 if(output == null || output.trim().isEmpty()) {
-                    Log.d(MainActivity.LOG_TAG, "No vold blocks found from /dev/block/vold");
+                    Log.d(LOG_TAG, "No vold blocks found from /dev/block/vold");
                 } else {
                     String devicePoints[] = output.split("\n");
                     for(String voldPoint: devicePoints) {
@@ -433,10 +431,10 @@ class FirstTimeSetup {
 
         if((defaults > 0 || foundInMount) && !MainActivity.listAllLUNsAndBlocks) {
             MainActivity.blockRecommendation = false;
-            data.edit().putBoolean(MainActivity.blockRecommendations, false).apply();
+            data.edit().putBoolean(blockRecommendations, false).apply();
         } else {
             MainActivity.blockRecommendation = true;
-            data.edit().putBoolean(MainActivity.blockRecommendations, true).apply();
+            data.edit().putBoolean(blockRecommendations, true).apply();
         }
 
         return extSDpresent;

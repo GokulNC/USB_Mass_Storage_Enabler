@@ -1,6 +1,5 @@
 package com.gokulnc.ums_universal;
 
-import android.*;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
@@ -23,14 +22,17 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.io.File;
 
-public class AppUpdate {
+import static com.gokulnc.ums_universal.Constants.LOG_TAG;
+import static com.gokulnc.ums_universal.Constants.XdaThreadURL;
+
+class AppUpdate {
 
     static String downloadURL = "";
 
     static void checkForUpdates(final boolean auto, final FirebaseRemoteConfig mFirebaseRemoteConfig, final Activity activity) {
         // https://github.com/firebase/quickstart-android
         final Context context = activity.getApplicationContext();
-        Log.d(MainActivity.LOG_TAG, "Checking for new update..");
+        Log.d(LOG_TAG, "Checking for new update..");
         //if(mFirebaseRemoteConfig==null) mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         //if(!auto) Toast.makeText(getApplicationContext(), getString(R.string.toast_checking_update), Toast.LENGTH_SHORT).show();
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
@@ -67,7 +69,7 @@ public class AppUpdate {
                                 notify.setPositiveButton(context.getString(R.string.action_update),new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
-                                        if (downloadURL != null && !downloadURL.isEmpty() && !downloadURL.equalsIgnoreCase(MainActivity.XdaThreadURL)) {
+                                        if (downloadURL != null && !downloadURL.isEmpty() && !downloadURL.equalsIgnoreCase(XdaThreadURL)) {
                                             final int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE_for_app_download = 10;
 
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -80,7 +82,7 @@ public class AppUpdate {
                                                 downloadAndInstallApk(downloadURL, context);
                                             }
                                         } else {
-                                            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.XdaThreadURL)));
+                                            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(XdaThreadURL)));
                                         }
                                     }
                                 });
@@ -99,7 +101,7 @@ public class AppUpdate {
                             notify.setPositiveButton(context.getString(R.string.action_yes),new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface arg0, int arg1) {
-                                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.XdaThreadURL)));
+                                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(XdaThreadURL)));
                                 }
                             });
                         }
@@ -178,7 +180,7 @@ public class AppUpdate {
 						registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));*/
                     } catch (final Exception ex) {
                         ex.printStackTrace();
-                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.XdaThreadURL)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(XdaThreadURL)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
                 }
             }.start();

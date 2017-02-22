@@ -41,7 +41,8 @@
             android:layout_gravity="right"
             android:textAlignment="gravity"
             android:layout_marginBottom="3dp"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textStyle="normal|bold" />
 
         <Switch
             android:layout_width="match_parent"
@@ -49,7 +50,8 @@
             android:text="@string/action_disable_notifs"
             android:id="@+id/switch2"
             android:layout_marginBottom="3dp"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textStyle="normal|bold" />
 
         <Switch
             android:layout_width="match_parent"
@@ -57,7 +59,8 @@
             android:text="@string/action_auto_start"
             android:id="@+id/switch3"
             android:layout_marginBottom="3dp"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textStyle="normal|bold" />
 
         <Switch
             android:layout_width="match_parent"
@@ -65,7 +68,8 @@
             android:text="@string/action_enable_auto_update_check"
             android:id="@+id/switch4"
             android:layout_marginBottom="3dp"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textStyle="normal|bold" />
 
         <Switch
             android:layout_width="match_parent"
@@ -73,7 +77,8 @@
             android:text="@string/action_enable_mediascan"
             android:id="@+id/switch5"
             android:layout_marginBottom="3dp"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textStyle="normal|bold" />
 
         <Button
             android:text="@string/action_select_mediascan_path"

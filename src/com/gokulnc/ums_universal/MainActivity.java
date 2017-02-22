@@ -1,18 +1,13 @@
 package com.gokulnc.ums_universal;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.os.EnvironmentCompat;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -26,9 +21,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -56,64 +49,39 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.stericson.RootShell.exceptions.RootDeniedException;
-import com.stericson.RootShell.execution.Command;
-import com.stericson.RootShell.execution.Shell;
 import com.stericson.RootTools.RootTools;
 import com.mikepenz.materialdrawer.Drawer;
 
+import static com.gokulnc.ums_universal.Constants.*;
 import static com.gokulnc.ums_universal.Dialogs.*;
 
 
 public class MainActivity extends AppCompatActivity {
 
-	//Following strings correspond to SharedPref keys
 	public static SharedPreferences data;
-	public static final String MyPREFERENCES = "Settings" ;
-	public static final String extSDpresence = "extSDpresence";
-	public static final String firstRun = "isFirstRun";
-	public static final String currentVersionCode = "currentVersionCode";
-	public static final String LUNsToUse = "LUNsToUse";
-	public static final String LUNsFound = "LUNsFound";
-	public static final String defaultBlockNumber = "defaultBlockNumber";
-	public static final String blocksList = "blocksList";
-	public static final String luns = "luns";
-	public static final String ADBenable = "ADBenable";
-	public static final String NotifsEnable = "NotificationsEnabled";
-	public static final String blockRecommendations = "blockRecommendations";
-	public static final String autoStart = "autoStart";
-	public static final String autoUpdate = "autoUpdateCheck";
-	public static final String mediaScanEnable = "MediaScanEnabled";
-	public static final String mediaScanPath = "mediaScanPath";
-	public static final String enableUMScmds = "enableUMScommands";
-	public static final String disableUMScmds = "disableUMScommands";
-	public static final String setPermissionCmds = "setPermissionCommands";
-	public static final String widgetEnabled = "isWidgetEnabled";
-	public static final String isUmsDisabled = "isUmsDisabled";
 
 	int numberOfLUNsFound = 1;
 	public static int numberOfLUNsUsed = 1;
 	
-	static Boolean[] enabledLUNs;
-	static Boolean[] recommendedBlocks;
+	static boolean[] enabledLUNs;
+	static boolean[] recommendedBlocks;
 
 	public static boolean isAppOpen = false;
-	static Boolean SELinux = true;
-	static Boolean requiresUnmount = false;
-	static Boolean rootAccess = false;
-	static Boolean USBconnected = false;
+	static boolean SELinux = true;
+	static boolean requiresUnmount = false;
+	static boolean rootAccess = false;
+	static boolean USBconnected = false;
 	static boolean enableADB = false;
 	static boolean enableNotifications = true;
 	static boolean enableMediaScan = false;
 	static boolean enableADs = true;
-	static Boolean blockRecommendation = true;
+	static boolean blockRecommendation = true;
 	static boolean listAllLUNsAndBlocks = false;
 	String USBconfig = "mtp";
 	static int currentVersionNumber;
 	static String currentVersion;
 	
-	public static Shell rootShell;
-	
+	RootHelper rootShell;
 	RootShell root = new RootShell();
 	
 	Button mtp, unmount;
@@ -125,38 +93,8 @@ public class MainActivity extends AppCompatActivity {
 	static ArrayList<String> availableLUNs = new ArrayList<>();
 	static ArrayList<String> blockDeviceFiles = new ArrayList<>();
 
-	String clearLUN = "";
-	String enableMSG = "";
-	
-	//public static final String chargingMode = "setprop sys.usb.config charging";
-	public static final String enableADBmode = "setprop persist.service.adb.enable 1\n"
-												+"setprop service.adb.enable 1";
-	public static final String ADBonlyMode = "setprop sys.usb.config adb";
-	public static final String MTPprop = "setprop sys.usb.config mtp";
-	//public static final String disconnectUSB = "setprop sys.usb.config none";
-	
-	public static final String CDprop = "setprop service.cdrom.enable 1";
-	public static final String UMSprop="setprop sys.usb.config mass_storage";
-	public static final String UMSconfig = "echo 0 > /sys/class/android_usb/android0/enable\n"
-											+"echo 12d1 > /sys/class/android_usb/android0/idVendor\n"
-											+"echo 1037 > /sys/class/android_usb/android0/idProduct\n"
-											+"echo mass_storage > /sys/class/android_usb/android0/functions\n"
-											+"echo 1 > /sys/class/android_usb/android0/enable";
-	//Not at all necessary, except for old kernels:
-	public static final String UMSlegacy = "echo 239 > /sys/class/android_usb/android0/bDeviceClass\n"
-											+"echo 2 > /sys/class/android_usb/android0/bDeviceSubClass\n"
-											+"echo 1 > /sys/class/android_usb/android0/bDeviceProtocol";
-	//To revert from UMSlegacy properties:
-	public static final String defaultDeviceProp = "echo 0 > /sys/class/android_usb/android0/bDeviceClass\n"
-													+"echo 0 > /sys/class/android_usb/android0/bDeviceSubClass\n"
-													+"echo 0 > /sys/class/android_usb/android0/bDeviceProtocol";
-	
-	public static final String memoryCardBlock = "/dev/block/mmcblk1";
+	String enableMSG = "", clearLUN = "";
 	static String blockDevice = "";
-	static String memoryCardPath = "";
-	public static final String LOG_TAG = "UMSenabler";
-
-	public static final String XdaThreadURL = "http://forum.xda-developers.com/android/apps-games/app-universal-mass-storage-enabler-beta-t3240097";
 
 	InterstitialAd mInterstitialAd;
 
@@ -173,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 			public void run() {
 				try {
 
-					getRootShell();
+					rootShell = new RootHelper(MainActivity.this);
 
 					data = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
@@ -247,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	void setBroadcastReceivers() {
+		//just to manage the "USB Status" Connection in UI
+
 		//Old Reference: http://www.codepool.biz/how-to-monitor-usb-events-on-android.html (Doesn't Help)
 		if(mUsbReceiver==null) {
 			mUsbReceiver = new BroadcastReceiver() {
@@ -315,7 +255,6 @@ public class MainActivity extends AppCompatActivity {
 		enableADB = data.getBoolean(ADBenable, false);
 		enableNotifications = data.getBoolean(NotifsEnable, true);
 		enableMediaScan = data.getBoolean(mediaScanEnable, false);
-		memoryCardPath = data.getString(mediaScanPath, "");
 
 		//Auto updates check
 		if(data.getBoolean(autoUpdate, true)) AppUpdate.checkForUpdates(true, FirebaseRemoteConfig.getInstance(), MainActivity.this);
@@ -331,74 +270,7 @@ public class MainActivity extends AppCompatActivity {
 			}
 		}
 
-		// To get all the blocks from SharedPref and parse it
-		blockDeviceFiles.clear();
-		String blocks = data.getString(blocksList, null);
-		if( blocks!=null && !(blocks.isEmpty()) ) {
-			String[] temp = blocks.split("\n");
-			/*for(String str : temp) {
-    			blockDeviceFiles.add(str);
-    		}*/
-			blockDeviceFiles.addAll(Arrays.asList(temp));
-		}
-		int blockNumber = data.getInt(defaultBlockNumber , 0);
-		if(!blockDeviceFiles.isEmpty()) blockDevice = blockDeviceFiles.get(blockNumber);
-		Log.d(LOG_TAG, "Using "+blockDevice+" as default block");
-
-		// To recommend users which block to use
-		recommendedBlocks = new Boolean[blockDeviceFiles.size()];
-		if(blockRecommendation) {
-			String s;
-			int prev=-1, curr, last_vold_block_i=-1, vold_block_count=0;
-			for(int i=0; i < blockDeviceFiles.size(); i++) {
-				s = blockDeviceFiles.get(i);
-				if(s.contains(memoryCardBlock)) {
-					recommendedBlocks[i] = s.contains(memoryCardBlock + "p");
-				} else {
-					curr = Integer.parseInt(s.replaceAll("[^0-9]", ""));
-					recommendedBlocks[i] = (curr == prev + 1 && prev != -1);
-					prev = curr; last_vold_block_i = i; ++vold_block_count;
-				}
-				if(blockDevice.equals(s) && !recommendedBlocks[i]) requiresUnmount = true;
-			}
-			if(vold_block_count==1) { //This might mean vold block was obtained from 'mount' cmd; hence might be recommended one
-				recommendedBlocks[last_vold_block_i] = true;
-				if(blockDevice.contains("vold")) requiresUnmount = false;
-			}
-		} else { //why did I write this?
-			for(int i=0; i<recommendedBlocks.length; i++){
-				recommendedBlocks[i] = blockDeviceFiles.get(i).contains(memoryCardBlock + "p");
-			}
-		}
-
-		// To get all the LUNs from SharedPref and parse it
-		String LUNsFoundList = data.getString(LUNsFound,null);
-		numberOfLUNsFound = data.getInt(luns, 1);
-		enabledLUNs = new Boolean[numberOfLUNsFound];
-		for(int i=0; i < enabledLUNs.length; i++) enabledLUNs[i] = false;
-
-		numberOfLUNsUsed = 0;
-		availableLUNs.clear();
-		String LUNsToBeUsed = data.getString(LUNsToUse, "0");
-		if( LUNsFoundList !=null && !(LUNsFoundList.isEmpty()) ) {
-			String temp[] = LUNsFoundList.split("\n");
-			String LUNnumbers[] = LUNsToBeUsed.split(",");
-			/*for(String str: temp) {
-    			availableLUNs.add(str);
-    		}*/
-			availableLUNs.addAll(Arrays.asList(temp));
-			if( !(availableLUNs.isEmpty()) && !(LUNsToBeUsed.isEmpty()) ) {
-				for(String str: LUNnumbers) {
-					++numberOfLUNsUsed;
-					try {
-						enabledLUNs[java.lang.Integer.parseInt(str)] = true;
-					}catch(Exception e) { //For parsing errors incase
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
+		readLUNsAndBlocks();
 
 		if(requiresUnmount) showUnmountWarning(MainActivity.this);
 		if(numberOfLUNsUsed > 1) multipleLUNsWarning(MainActivity.this);
@@ -421,6 +293,78 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
+	}
+
+	void readLUNsAndBlocks() {
+		//reads all the stored values of LUNs and blocks from SharedPref.
+
+		// To get all the blocks from SharedPref and parse it:
+		blockDeviceFiles.clear();
+		String blocks = data.getString(blocksList, null);
+		if( blocks!=null && !(blocks.isEmpty()) ) {
+			String[] temp = blocks.split("\n");
+			blockDeviceFiles.addAll(Arrays.asList(temp));
+		}
+		int blockNumber = data.getInt(defaultBlockNumber , 0);
+		if(!blockDeviceFiles.isEmpty()) blockDevice = blockDeviceFiles.get(blockNumber);
+		Log.d(LOG_TAG, "Using "+blockDevice+" as default block");
+
+		recommendedBlocks = new boolean[blockDeviceFiles.size()];
+		// To recommend users which block to use:
+		if(blockRecommendation) {
+			String s;
+			int prev=-1, curr, last_vold_block_i=-1, vold_block_count=0;
+			for(int i=0; i < blockDeviceFiles.size(); i++) {
+				s = blockDeviceFiles.get(i);
+				if(s.contains(memoryCardBlock)) {
+					recommendedBlocks[i] = s.contains(memoryCardBlock + "p");
+				} else {
+					try {
+						curr = Integer.parseInt(s.replaceAll("[^0-9]", ""));
+						recommendedBlocks[i] = (curr == prev + 1 && prev != -1);
+						prev = curr;
+						last_vold_block_i = i;
+						++vold_block_count;
+					}catch(Exception e) {
+						recommendedBlocks[i] = false;
+					}
+				}
+				if(blockDevice.equals(s) && !recommendedBlocks[i]) requiresUnmount = true;
+			}
+			if(vold_block_count==1) { //This might mean vold block was obtained from 'mount' cmd; hence might be recommended one
+				recommendedBlocks[last_vold_block_i] = true;
+				if(blockDevice.contains("vold")) requiresUnmount = false;
+			}
+		} else { //why did I write this?
+			for(int i=0; i<recommendedBlocks.length; i++){
+				recommendedBlocks[i] = blockDeviceFiles.get(i).contains(memoryCardBlock + "p");
+			}
+		}
+
+		// To get all the LUNs from SharedPref and parse it:
+		String LUNsFoundList = data.getString(LUNsFound,null);
+		numberOfLUNsFound = data.getInt(luns, 1);
+		enabledLUNs = new boolean[numberOfLUNsFound];
+		for(int i=0; i < enabledLUNs.length; i++) enabledLUNs[i] = false;
+
+		numberOfLUNsUsed = 0;
+		availableLUNs.clear();
+		String LUNsToBeUsed = data.getString(LUNsToUse, "0");
+		if( LUNsFoundList !=null && !(LUNsFoundList.isEmpty()) ) {
+			String temp[] = LUNsFoundList.split("\n");
+			String LUNnumbers[] = LUNsToBeUsed.split(",");
+			availableLUNs.addAll(Arrays.asList(temp));
+			if( !(availableLUNs.isEmpty()) && !(LUNsToBeUsed.isEmpty()) ) {
+				for(String str: LUNnumbers) {
+					++numberOfLUNsUsed;
+					try {
+						enabledLUNs[java.lang.Integer.parseInt(str)] = true;
+					}catch(Exception e) { //For parsing errors incase
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 
 	void checkSELinux() throws IOException {
@@ -461,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
 					fail.setPositiveButton(getString(R.string.action_disable_selinux),new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
-							executeAsSU("setenforce 0");
+							rootShell.executeAsSU("setenforce 0");
 							SELinux = false;
 							Log.d(LOG_TAG, "User disabled SE Linux Enforcement.");
 							new Thread() {
@@ -484,32 +428,6 @@ public class MainActivity extends AppCompatActivity {
 
 		} else continueExec();
 
-	}
-
-	void getRootShell() {
-
-		try {
-
-			if (!RootTools.isRootAvailable()) {
-				Log.d(LOG_TAG, "It seems su binary is missing, or unable to search for it.");
-				noRootAccess(getString(R.string.error_su_not_found)+" \n"+getString(R.string.error_no_root), this);
-				return;
-			}
-			Log.d(LOG_TAG, "Requesting for Root Access..");
-			rootShell = RootTools.getShell(true);
-
-		} catch (IOException e) {
-			noRootAccess(getString(R.string.error_root_not_granted), this);
-			e.printStackTrace();
-		} catch (TimeoutException e) {
-			Log.d(LOG_TAG, "Timeout waiting for Root Access..");
-			noRootAccess(getString(R.string.error_root_timeout), this);
-			e.printStackTrace();
-		} catch (RootDeniedException e) {
-			Log.d(LOG_TAG, "Denied Root Access..");
-			noRootAccess(getString(R.string.error_root_denied), this);
-			e.printStackTrace();
-		}
 	}
 
 	void buildCommands() {
@@ -552,11 +470,11 @@ public class MainActivity extends AppCompatActivity {
 					.append("chmod 777 ").append(str).append("/file");
 		}
 		saveCommands(setPerm.toString());
-		if(execute) executeAsSU(setPerm.toString());
+		if(execute) rootShell.executeAsSU(setPerm.toString());
 	}
 
 	void saveCommands(String setPerm) {
-		//This shit is saved just for the sake of easily auto-enable UMS when USB is connected, enabled from Settings
+		//This shit is saved just for the sake of easily auto-enabling UMS when USB is connected (enable it from Settings Activity)
 		data.edit().putString(enableUMScmds, clearLUN+"\n"+CDprop+"\n"+enableMSG+"\n"+UMSlegacy+"\n"+UMSconfig+"\n"+UMSprop+(enableADB?",adb":"")+"\n"+enableMSG).apply();
 		data.edit().putString(disableUMScmds, clearLUN+"\n"+defaultDeviceProp+"\n"+MTPprop).apply();
 		data.edit().putString(setPermissionCmds, setPerm).apply();
@@ -564,14 +482,9 @@ public class MainActivity extends AppCompatActivity {
 
 	void setUI() {
 
-		setContentView(R.layout.activity_main);
-		if(listAllLUNsAndBlocks) return; //reduce unnecessary load
+		setContentView(R.layout.activity_main); //to remove the spinner
 		initADs();
-		materialDrawer();
-		//TextView link = (TextView) findViewById(R.id.textView1);
-	   // String linkText = "<a href='http://forum.xda-developers.com/android/apps-games/app-universal-mass-storage-enabler-beta-t3240097'>Created By Gokul NC</a>";
-	   // link.setText(Html.fromHtml(linkText));
-	   // link.setMovementMethod(LinkMovementMethod.getInstance());
+		initMaterialDrawer();
 		final Animation animAlpha = AnimationUtils.loadAnimation(this, R.anim.anim_alpha);
 
 	    ums = (ImageButton)findViewById(R.id.button1);
@@ -585,7 +498,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View arg0) {
 
-            	executeAsSU(clearLUN+"\n"+defaultDeviceProp+"\n"+MTPprop+(enableADB?",adb":""));
+            	rootShell.executeAsSU(clearLUN+"\n"+defaultDeviceProp+"\n"+MTPprop+(enableADB?",adb":""));
                 Toast.makeText(getApplicationContext(), getString(R.string.toast_mtp_enabled), Toast.LENGTH_SHORT).show();
                 setUSBconfig("mtp"+(enableADB?",adb":""));
 				unmount.setText(getString(R.string.action_enable_ums));
@@ -628,7 +541,7 @@ public class MainActivity extends AppCompatActivity {
 
 	}
 
-	void materialDrawer() {
+	void initMaterialDrawer() { //THANKS to vikasb32 (from XDA) who wrote this to replace the old actionbar options with a drawer
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		try {
@@ -696,9 +609,9 @@ public class MainActivity extends AppCompatActivity {
 								case 101:
 									if (!USBconnected) Toast.makeText(getApplicationContext(), R.string.toast_usb_not_connected, Toast.LENGTH_SHORT).show();
 									if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-										executeAsSU("am start -n 'com.android.settings/.Settings$UsbSettingsActivity'");
+										rootShell.executeAsSU("am start -n 'com.android.settings/.Settings$UsbSettingsActivity'");
 									else
-										executeAsSU("am start -n 'com.android.settings/.deviceinfo.UsbModeChooserActivity'");
+										rootShell.executeAsSU("am start -n 'com.android.settings/.deviceinfo.UsbModeChooserActivity'");
 									break;
 								case 102:
 									startActivity(new Intent(android.provider.Settings.ACTION_MEMORY_CARD_SETTINGS));
@@ -709,7 +622,7 @@ public class MainActivity extends AppCompatActivity {
 									showInterstitialADs();
 									break;
 								case 104:
-									executeAsSU("setenforce 1");
+									rootShell.executeAsSU("setenforce 1");
 									Toast.makeText(getApplicationContext(), R.string.toast_selinux_enabled, Toast.LENGTH_SHORT).show();
 									//active = false;
 									finish();
@@ -753,7 +666,7 @@ public class MainActivity extends AppCompatActivity {
 
 	void enableUMS() {
 		//If changing the below line, update saveCommands() also
-		executeAsSU(clearLUN+"\n"+CDprop+"\n"+enableMSG+"\n"+UMSlegacy+"\n"+UMSconfig+"\n"+UMSprop+(enableADB?",adb":"")+"\n"+enableMSG);
+		rootShell.executeAsSU(clearLUN+"\n"+CDprop+"\n"+enableMSG+"\n"+UMSlegacy+"\n"+UMSconfig+"\n"+UMSprop+(enableADB?",adb":"")+"\n"+enableMSG);
 		//LUN parameters are written twice, since some devices' USB configs seem to write their own values (from their init.xxx.usb.rc) after the 'UMSprop' command
 		//It is also written before 'UMSprop' since some devices don't seem to allow changing LUN parameters after 'UMSprop'; it's weird
 
@@ -771,8 +684,8 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	void disableUMS() {
-		executeAsSU(clearLUN+"\n"+defaultDeviceProp+"\n"+MTPprop);
-		if(enableADB) executeAsSU(enableADBmode+"\n"+ADBonlyMode);
+		rootShell.executeAsSU(clearLUN+"\n"+defaultDeviceProp+"\n"+MTPprop);
+		if(enableADB) rootShell.executeAsSU(enableADBmode+"\n"+ADBonlyMode);
 		setUSBconfig("mtp");
 		UsbBroadcastReceiver.isUMSdisabled = true;
 		data.edit().putBoolean(isUmsDisabled, true).apply();
@@ -782,6 +695,7 @@ public class MainActivity extends AppCompatActivity {
 		ums.setBackgroundResource(R.drawable.usb_off);
 		//Snackbar.make(findViewById(R.id.frame_container), R.string.toast_ums_disabled, Snackbar.LENGTH_SHORT).show();
 		Toast.makeText(getApplicationContext(), getString(R.string.toast_ums_disabled), Toast.LENGTH_SHORT).show();
+		String memoryCardPath = data.getString(mediaScanPath, "");
 		if(enableMediaScan && !memoryCardPath.equals("")) forceMediaScan(memoryCardPath);
 	}
 
@@ -865,38 +779,6 @@ public class MainActivity extends AppCompatActivity {
         if(numberOfLUNsUsed > 1) multipleLUNsWarning(this);
     }
 
-	void executeAsSU(final String command) {
-
-		Command cmd = new Command(0, command);
-
-		try {
-			if(rootShell==null || rootShell.isClosed) getRootShell();
-			rootShell.add(cmd);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					AlertDialog.Builder fail = new AlertDialog.Builder(MainActivity.this);
-					fail.setTitle(getString(R.string.error_general));
-					CharSequence msg = getString(R.string.error_execution)+"\n\n"+command+"\n\n"+e.getMessage()+"\n\n"+getString(R.string.error_contact);
-					fail.setMessage(msg);
-					fail.setPositiveButton(getString(R.string.action_ok),new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							finish();
-						}
-					});
-
-					fail.setCancelable(false);
-					fail.create();
-					fail.show();
-				}
-			});
-		}
-
-	}
-
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -964,18 +846,18 @@ public class MainActivity extends AppCompatActivity {
 			startActivityForResult(intent, 1);
 			return true;
 		} else if (itemId == R.id.storageSettings) {
-			//executeAsSU("am start -n 'com.android.settings/.Settings$StorageSettingsActivity");
+			//rootShell.executeAsSU("am start -n 'com.android.settings/.Settings$StorageSettingsActivity");
 			Intent i = new Intent(android.provider.Settings.ACTION_MEMORY_CARD_SETTINGS);
 			startActivity(i);
 			return true;
 		} else if (itemId == R.id.defaultUSBsettings) {
 			if(USBconnected) {
-				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) executeAsSU("am start -n 'com.android.settings/.Settings$UsbSettingsActivity'");
-				else executeAsSU("am start -n 'com.android.settings/.deviceinfo.UsbModeChooserActivity'");
+				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) rootShell.executeAsSU("am start -n 'com.android.settings/.Settings$UsbSettingsActivity'");
+				else rootShell.executeAsSU("am start -n 'com.android.settings/.deviceinfo.UsbModeChooserActivity'");
 			} else Toast.makeText(getApplicationContext(), "Make sure to connect USB to choose device's default mode!", Toast.LENGTH_SHORT).show();
 			return true;
 		} else if (itemId == R.id.enableSElinux) {
-			executeAsSU("setenforce 1");
+			rootShell.executeAsSU("setenforce 1");
 			Toast.makeText(getApplicationContext(), "SELinux set to Enforcing!!", Toast.LENGTH_SHORT).show();
 			finish();
 			return true;
@@ -1042,9 +924,6 @@ public class MainActivity extends AppCompatActivity {
 
 }
 
-
-
-
 /*
 References for future: 
 
@@ -1052,6 +931,5 @@ References for future:
 To find external SD card mount point: mount | sed 's/ on / /g' | egrep "extSdCard|external_sd|sdcard1" | grep /dev/block | cut -f 2 -d " "
 To find its device block: mount | sed 's/ on / /g' | egrep "extSdCard|external_sd|sdcard1" | grep /dev/block | cut -f 1 -d " "
 More @ here: http://forum.xda-developers.com/galaxy-s3/themes-apps/app-easyums-t2576500
-
 
 */

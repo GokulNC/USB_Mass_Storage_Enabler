@@ -1,3 +1,4 @@
+<!-- Huge thanks to vikasb32 (XDA) for this UI, who replaced the old boring UI of v1.4.5 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:ads="http://schemas.android.com/apk/res-auto"

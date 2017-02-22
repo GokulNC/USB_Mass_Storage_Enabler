@@ -1,0 +1,25 @@
+<html><body>
+<h3><b>A quoi sert cette application :</b></h3><br>
+
+Cette application pour appareil ROOTÉ sert à monter votre carte mémoire en tant que périphérique USB de Stockage de Masse (USB Mass Storage - UMS) sur votre ordinateur, votre TV, votre lecteur Audio/DVD ou n&apos;importe quoi d&apos;autre.<br>
+
+Cette application NE montera PAS votre stokage interne (puisqu&apos;il est contenu dans le répertoire ./media/0/ de la partition /data et que la partition /data est formatée en EXT4).
+<br>Si vous souhaitez vraiment monter votre stockage interne en tant que Stockage de Masse, cela peut être réalisé en utilisant l&apos;application <a href='http://google.com/search?q=usb+sharer+apk'>USB Sharer</a> (mais il sera monté en lecture seule).<br><br>
+
+<hr><h3><b>Comment utiliser l&apos;application :</b></h3><br>
+
+1. Pour activer le Stockage de Masse, cliquer sur &apos;Activer Stockage de Masse&apos;.
+    (Ré-essayer 2-3 fois si ça ne fonctionne pas, éssayer également de modifier les paramètres)<br><br>
+2. Avant de débrancher le câble USB, éjecter le périphérique depuis l&apos;ordinateur en premier, puis cliquer sur le bouton &apos;Déconnecter Stockage de Masse&apos;.<br><br>
+
+<hr><h3><b>Raisons probables du disfonctionnement de cette application :</b></h3><br>
+
+1. Le noyau (kernel) de votre appareil n&apos;embarque pas le Gadget &laquo;Mass Storage Gadget&raquo; avec le support de l&apos;émulation USB.<br><u>Solution :</u> Demander à un développeur de votre appareil de compiler un noyau embarquant le Gadget &laquo;Mass Storage Gadget&raquo;.<br><br>
+2. Votre appareil ne supporte pas les cartes mémoires, ou aucune carte mémoire n&apos;est insérée.<br><br>
+3. Votre carte mémoire est peut être cryptée ou utilisée en tant que Stockage Interne (à partir d&apos;<b>Android 6.0</b>, le stockage interne est formatté en tant que partition EXT4 et crypté)<br><u>Solution :</u> Vérfier que la carte mémoire soit formatée en tant que partition <b>FAT32</b>.<br><br>
+4. Il peut y avoir quelque chose (comme un Anti-Virus) qui n&apos;autorise pas à désactiver la protection SE Linux.<br><br>
+5. Votre device pourrait ne pas être rooté correctement.<br><br>
+
+Pour une aide supplémentaire et plus d&apos;explications ou si vous souhaitez faire une suggestion ou rapporter un bug, cliquez ici : <h2><b><a href='http://forum.xda-developers.com/android/apps-games/app-universal-mass-storage-enabler-beta-t3240097'>Aide & Support (en anglais)</a></b></h2>
+<br><br>Développé par : <b><a href='http://fb.com/gokulnc'>Gokul NC</a></b><br>
+</body></html>

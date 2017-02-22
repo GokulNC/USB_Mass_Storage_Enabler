@@ -23,6 +23,7 @@ import com.stericson.RootTools.RootTools;
 import java.util.Date;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.gokulnc.ums_universal.Constants.LOG_TAG;
 
 public class UsbBroadcastReceiver extends BroadcastReceiver {
 
@@ -38,21 +39,21 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        Log.d(MainActivity.LOG_TAG, "Received Broadcast: "+action);
-        if(data==null) data = context.getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+        Log.d(LOG_TAG, "Received Broadcast: "+action);
+        if(data==null) data = context.getSharedPreferences(Constants.MyPREFERENCES, Context.MODE_PRIVATE);
 
-        if(data.getBoolean(MainActivity.autoStart, false) && !MainActivity.isAppOpen && action.equalsIgnoreCase(usbStateChangeAction)) {
+        if(data.getBoolean(Constants.autoStart, false) && !MainActivity.isAppOpen && action.equalsIgnoreCase(usbStateChangeAction)) {
             if(intent.getBooleanExtra("connected", false)) toggleUMS(true, false, context);
             else toggleUMS(false, true, context);
         } else if(action.equalsIgnoreCase(intentEnableUMS)) {
-            if(intent.getBooleanExtra("fromWidget", false) && !data.getBoolean(MainActivity.widgetEnabled, false)) {
-                data.edit().putBoolean(MainActivity.widgetEnabled, true).apply();
+            if(intent.getBooleanExtra("fromWidget", false) && !data.getBoolean(Constants.widgetEnabled, false)) {
+                data.edit().putBoolean(Constants.widgetEnabled, true).apply();
                 return; //all this bullshit to ignore the onUpdate() from widget when widget created for first time
             }
             toggleUMS(true, false, context);
         } else if(action.equalsIgnoreCase(intentDisableUMS)) {
-            if(intent.getBooleanExtra("fromWidget", false) && !data.getBoolean(MainActivity.widgetEnabled, false)) {
-                data.edit().putBoolean(MainActivity.widgetEnabled, true).apply();
+            if(intent.getBooleanExtra("fromWidget", false) && !data.getBoolean(Constants.widgetEnabled, false)) {
+                data.edit().putBoolean(Constants.widgetEnabled, true).apply();
                 return;
             }
             //Notification will not be removed when toggled from Notification
@@ -75,7 +76,7 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
         install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         long downloadId = intent.getExtras().getLong(DownloadManager.EXTRA_DOWNLOAD_ID);
-        Log.d(MainActivity.LOG_TAG, "download id: "+downloadId);
+        Log.d(LOG_TAG, "download id: "+downloadId);
         DownloadManager dlMgr = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
             /*try {
                 dlMgr.openDownloadedFile(downloadId);
@@ -123,7 +124,9 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
     }
 
     boolean toggleUMS(boolean enableUMS, boolean removeNotif, Context context) {
-        if(new Date().getTime()-lastAccessTime > 1500 || lastAccessTime==Long.MAX_VALUE) {
+        if(new Date().getTime()-lastAccessTime > 4500 || lastAccessTime==Long.MAX_VALUE) {
+            //When a mode is toggled, the USB_STATE CHANGE broadcast is sent 2 times (thus firing toggles recursively), which gets built up exponentially.
+            //This dirty hack condition ensures that those toggles are eliminated (by allowing a toggle only once in 4 secs)
             lastAccessTime = new Date().getTime();
             return enableUMS?enableUMS(context):disableUMS(context, removeNotif);
         }
@@ -132,7 +135,7 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
 
     boolean enableUMS(Context context) {
         try {
-            String enableCommand = data.getString(MainActivity.setPermissionCmds, "")+"\n"+data.getString(MainActivity.enableUMScmds, "");
+            String enableCommand = data.getString(Constants.setPermissionCmds, "")+"\n"+data.getString(Constants.enableUMScmds, "");
             if(enableCommand.isEmpty()) {
                 Toast.makeText(context, context.getString(R.string.toast_open_app_once), Toast.LENGTH_SHORT).show();
                 return false;
@@ -155,7 +158,7 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
 
     boolean disableUMS(Context context, boolean removeNotif) {
         try {
-            String disableCommand = data.getString(MainActivity.disableUMScmds, "");
+            String disableCommand = data.getString(Constants.disableUMScmds, "");
             if(disableCommand.isEmpty()) {
                 Toast.makeText(context, context.getString(R.string.toast_open_app_once), Toast.LENGTH_SHORT).show();
                 return false;
@@ -179,9 +182,9 @@ public class UsbBroadcastReceiver extends BroadcastReceiver {
 
     public static void showNotification(Context context) {
 
-        if(data==null) data = context.getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+        if(data==null) data = context.getSharedPreferences(Constants.MyPREFERENCES, Context.MODE_PRIVATE);
 
-        if(data.getBoolean(MainActivity.NotifsEnable, true) || data.getBoolean(MainActivity.autoStart, false)&&!MainActivity.isAppOpen) {
+        if(data.getBoolean(Constants.NotifsEnable, true) || data.getBoolean(Constants.autoStart, false)&&!MainActivity.isAppOpen) {
             PendingIntent pi = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
             PendingIntent ums_action;
             if(isUMSdisabled) {

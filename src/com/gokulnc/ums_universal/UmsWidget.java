@@ -19,8 +19,8 @@ public class UmsWidget extends AppWidgetProvider {
 
     public void onDisabled(Context context) {
         super.onDisabled(context);
-        if(UsbBroadcastReceiver.data==null) UsbBroadcastReceiver.data = context.getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-        UsbBroadcastReceiver.data.edit().putBoolean(MainActivity.widgetEnabled, false).apply();
+        if(UsbBroadcastReceiver.data==null) UsbBroadcastReceiver.data = context.getSharedPreferences(Constants.MyPREFERENCES, Context.MODE_PRIVATE);
+        UsbBroadcastReceiver.data.edit().putBoolean(Constants.widgetEnabled, false).apply();
     }
 
     @Override

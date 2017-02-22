@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UMS Enabler (Universal)</string>
+    <string name="app_name_short">UMS Enabler</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="action_help">Aide</string>
+    <string name="action_exit">Quitter</string>
+    <string name="action_disable_selinux">Définir sur permissif</string>
+    <string name="action_enable_ums">Activer Stockage de Masse USB</string>
+    <string name="action_disable_ums">Désactiver Stockage de Masse USB</string>
+    <string name="action_enable_ums_short">Activer SMU</string>
+    <string name="action_disable_ums_short">Désactiver SMU</string>
+    <string name="action_download">Télécharger</string>
+    <string name="action_enable_auto_update_check">Vérifier mises à jour auto.</string>
+    <string name="action_enable_mtp">Activer transfert MTP</string>
+    <string name="action_enable_adb">Activer ADB</string>
+    <string name="action_disable_notifs">Désactiver les notifications</string>
+    <string name="action_auto_start">Activation auto. SMU</string>
+    <string name="action_save_close">Sauver &amp; Quitter</string>
+    <string name="action_enable_mediascan">Activer le scan Media</string>
+    <string name="action_select_mediascan_path">Spécifier chemin Carte Mémoire</string>
+    <string name="action_list_all">Lister tous les LUNs &amp; Blocks</string>
+    <string name="action_show_changelog">Changelog</string>
+    <string name="action_yes">Oui</string>
+    <string name="action_cancel">Annuler</string>
+    <string name="action_ok">OK</string>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <string name="title_activity_help">Aide &amp; Dépannage</string>
+    <string name="title_activity_advanced_options">Paramètres app.</string>
+
+    <!--____________________ DRAWER ITEMS :______________________________________-->
+
+    <string name="drawer_item_default_usb_settings">Paramètres USB par défaut</string>
+    <string name="drawer_item_storage_settings">Paramètres de stockage</string>
+    <string name="drawer_item_app_settings">Paramètres app.</string>
+    <string name="drawer_item_enable_selinux">Activer SELinux et Quitter</string>
+    <string name="drawer_item_enable_selinux_description">Définir SELinux sur Restreint &amp; Quitter</string>
+    <string name="drawer_item_check_updates">Vérif. mises à jour</string>
+    <string name="drawer_item_enable_adb">Activer ADB</string>
+    <string name="drawer_item_support">Voir les pubs (pour m\'encourager)</string>
+
+    <!--____________________ TOAST MESSAGES :______________________________________-->
+
+    <string name="toast_usb_not_connected">Veuillez connecter le câble USB pour choisir le mode par défaut de l\'appareil !</string>
+    <string name="toast_selinux_enabled">SELinux défini sur restreint !!</string>
+    <string name="toast_internet_problem">Veuillez ré-essayer après avoir activé votre connexion Internet</string>
+    <string name="toast_ums_enabled">Stockage de Masse Activé !!</string>
+    <string name="toast_ums_disabled">SMU Désactivé !!</string>
+    <string name="toast_mtp_enabled">MTP Activé !!</string>
+    <string name="toast_no_root">Pas d\'accès root</string>
+    <string name="toast_checking_update">Vérification des mises à jour...</string>
+
+    <string name="toast_zero_luns">Spécifier au moins un LUN à utiliser</string>
+    <string name="toast_thanks">Merci</string>
+    <string name="toast_loading">Chargement...</string>
+
+    <!--_____________________ ALERT DIALOGS :___________________________________________-->
+
+    <string name="alert_mmc_not_found">Carte Mémoire non-trouvée</string>
+    <string name="alert_mmc_not_found_msg">Support des Cartes Mémoires introuvable sur cet appareil.
+\n\n(Le fichier block \'/dev/block/mmcblk1\' n\'a pas été trouvé.
+\n\nSi votre appareil supporte les Cartes Mémoires et que cette erreur survient, contactez le developpeur.)</string>
+    <string name="alert_no_support">Appareil non-supporté</string>
+    <string name="alert_no_blocks">Pas de support des Cartes Mémoires trouvé ou les blocks Vold ont été trouvés !
+\nCette application ne fonctionnera pas sur cet appareil.</string>
+
+    <string name="alert_perm_denied">Permission Refusée</string>
+
+    <string name="alert_selinux">La sécurité SE Linux est activée !!
+\n\nLa sécurité SE Linux doit être définie sur \'permissif\' pour que cette application fonctionne.</string>
+
+    <string name="alert_no_gadget">L\'application ne fonctionnera pas !</string>
+    <string name="alert_no_gadget_msg">Mass Storage Gadget introuvable!
+\n\nCette application fonctionnera uniquement s\'il y a le Gadget «Mass Storage Gadget» &amp; les pilotes FUSE intégrés dans le noyau de votre appareil, et elle ne fonctionnera pas tant qu\'un noyau compatible ne sera pas flashé...</string>
+
+    <string name="alert_no_root_msg">Impossible d\'obtenir les droits root.
+\nCette application fonctionne uniquement sur les appareils rootés.
+\n\nSi l\'appareil est déjà rooté, vérifier que cette application soit bien autorisée à accéder aux droits root.</string>
+
+    <string name="alert_check_update">Recherche des nouvelles mises à jour</string>
+    <string name="alert_check_update_msg">Voulez-vous rechercher de nouvelles mises à jour manuellement ?</string>
+    <string name="alert_upto_date">Aucune nouvelle mise à jour trouvée.\n\n
+Vous exécutez la dernière version </string>
+    <string name="alert_new_update">Nouvelle mise à jour trouvée !!</string>
+    <string name="alert_lastest_ver">Dernière version :\t</string>
+    <string name="alert_current_ver">Version courante :\t</string>
+
+    <string name="alert_download_new">Voulez-vous télécharger la dernière mise à jour ?</string>
+    <string name="alert_update_failed">Impossible de rechercher les mises à jour.\n
+Vérifiez que vous soyez bien connecté à Internet.</string>
+    <string name="alert_update_download_permission">Vous devez accorder l\'autorisation d\'accéder au stockage pour l\'application. Accordez-la, puis ré-essayez...</string>
+
+    <string name="alert_no_busybox">BusyBox n\'est pas installé</string>
+    <string name="alert_no_busybox_msg">Cette application requiert l\'installation de BusyBox pour utiliser certains binaires.
+\n\nCette application pourrait ne pas fonctionner correctement en son absence.
+
+\n\nPour une meilleure compatibilité, il est recommandé d\'installer BusyBox, vider les données de cette application et la re-lancer (ou de ré-installer l\'application).
+\n(Cette alerte ne sera plus affichée...)
+</string>
+    <string name="action_install_busybox">Installer BusyBox</string>
+    <string name="action_later">Plus Tard</string>
+
+    <string name="alert_unmount">Pour éviter tout problème, vous devriez d\'abord démonter la Carte Mémoire depuis les Paramètres -> Stockage.
+\nAprès ça, vous pouvez activer le Stockage de Masse.
+\n\nAprès avoir déconnecté le câble USB, vous pouvez remonter la Carte Mémoire en répétant la procédure depuis les paramètres de stockage.</string>
+    <string name="alert_multi_luns_msg">Si vous voyez la Carte Mémoire montée plus d\'une fois sur votre ordinateur, éjectez toutes les Cartes Mémoires à l\'exception d\'une seule que vous pourrez alors utiliser.</string>
+
+    <string name="alert_warning">Attention</string>
+    <string name="alert_unsupportedLUNs">Les LUNs suivants POURRAIENT ne pas supporter l\'émulation USB.
+\n\nNéanmoins, vous pouvez essayer l\'application pour vérifier le résultat par vous même...</string>
+
+    <string name="alert_block_notrecommended">You are using a device block which is not recommended (instead of its corresponding recommended partition)</string>
+    <string name="error_msg">Message d\'erreur :</string>
+    <string name="error_details">Détails :</string>
+    <string name="error_unknown">Erreur interne de l\'application.
+\nContacter le développeur.</string>
+    <string name="error_su_not_found">Il semble que le binaire su soit manquant, ou inaccessible.</string>
+    <string name="error_no_root">L\'appareil n\'est probablement pas rooté.</string>
+    <string name="error_root_not_granted">Impossible d\'obtenir les droits root.</string>
+    <string name="error_root_timeout">Temps d\'attente pour obtenir les droits root expiré...</string>
+    <string name="error_root_denied">L\'utilisateur a refusé d\'accorder les droits root...</string>
+    <string name="error_unable_shell">Impossible d\'obtenir le RootShell (shell en tant que su).</string>
+    <string name="error_selinux">Impossible de vérifier le statut de SE Linux !!</string>
+    <string name="error_execution">Impossible d\'exécuter la commande suivante :</string>
+    <string name="error_contact">Veuillez contacter le développeur pour plus d\'aide.</string>
+    <string name="error_general">L\'application a échouée</string>
+    <string name="error_ums">Erreur à l\'activation du stockage de masse !</string>
+    <string name="error_ums_disable">Erreur à la désactivation du stockage de masse !</string>
+
+    <!--_____________________ NOTIFICATIONS :___________________________________________-->
+
+    <string name="notif_ums_enabled">Stockage de Masse activé</string>
+    <string name="notif_ums_disabled">Stockage de Masse désactivé</string>
+    <string name="notif_ums_enabled_msg">Le mode USB courant est Stockage de Masse</string>
+    <string name="notif_ums_disabled_msg">Le mode USB courant est MTP</string>
+
+    <!--_____________________ DYNAMIC LAYOUT :___________________________________________-->
+
+    <string name="settings_layout_luns_in_use">LUNs utilisés :</string>
+    <string name="settings_layout_partition_in_use">Block partition utilisé :</string>
+    <string name="settings_layout_mediascan_path">Chemin de la Carte Mémoire spécifié</string>
+
+    <string name="main_layout_usb_config">Configuration USB :</string>
+    <string name="main_layout_usb_status">Statut USB :</string>
+    <string name="state_connected">CONNECTÉ</string>
+    <string name="state_disconnected">DÉCONNECTÉ</string>
+
+    <!--_____________________________________________________________________________-->
+
+    <string name="asset_help_html">help-fr.html</string>
+    <string name="nnf_need_valid_filename">Spécifier un nom de fichier valide</string>
+    <string name="alert_to_stop_autoupdate">(Vous pouvez désactiver la recherche automatique de mises à jour depuis les paramètres.)</string>
+    <string name="toast_open_app_once">Ouvrir l\'application au moins une fois</string>
+    <string name="action_add_block_manually">Ajouter le fichier Block manuellement</string>
+    <string name="alert_add_block_manually">Ajouter Block manuellement</string>
+    <string name="alert_add_block_manually_msg">Êtes vous certain de vouloir ajouter le fichier block suivant manuellement ?
+\n(Faîtes-le uniquement si vous comprenez ce que vous êtes en train de faire...)
+\n\nChemin du fichier Block spécifié : </string>
+    <string name="action_add">Ajouter</string>
+    <string name="action_update">Mettre à jour</string>
+    <string name="alert_update_download_permission_failed">Vous avez refusé la permission pour télécharger l\'APK de mise à jour</string>
+    <string name="toast_downloading">Téléchargement en cours</string>
+    
+    <string name="banner_ad_unit_id">ca-app-pub-1067658817574197/9781768067</string>
+    <string name="banner_ad_unit_id2">ca-app-pub-1067658817574197/7868468860</string>
+    <string name="banner_ad_unit_id3">ca-app-pub-1067658817574197/7030864065</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-1067658817574197/1883398061</string>
+    <string name="ad_app_id">ca-app-pub-1067658817574197~6828301660</string>
+
+</resources>
